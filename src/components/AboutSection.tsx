@@ -11,7 +11,7 @@ export default function AboutSection() {
               Neşeli Gayrimenkul Hakkında
             </h2>
             <p className="text-lg text-gray-600 mb-6">
-              10 yılı aşkın deneyimimizle, müşterilerimize en iyi emlak
+              7 yılı aşkın deneyimimizle, müşterilerimize en iyi emlak
               çözümlerini sunuyoruz. Güvenilir, şeffaf ve profesyonel hizmet
               anlayışımızla hayalinizdeki evi bulmanıza yardımcı oluyoruz.
             </p>
@@ -61,7 +61,8 @@ export default function AboutSection() {
                     Geniş Portföy
                   </h3>
                   <p className="text-gray-600">
-                    500+ aktif ilan ile her bütçeye uygun gayrimenkul seçeneği
+                    Çok sayıda aktif ilan ile her bütçeye uygun gayrimenkul
+                    seçeneği
                   </p>
                 </div>
               </div>
@@ -90,19 +91,13 @@ export default function AboutSection() {
                 </div>
               </div>
             </div>
-
-            <div className="mt-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                Daha Fazla Bilgi
-              </button>
-            </div>
           </div>
 
           {/* Image */}
           <div className="relative">
             <div className="relative h-96 lg:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src="/images/about/office-interior.jpg" // Yerel image
+                src="/images/about/about-pic.jpg" // Yerel image
                 alt="Neşeli Gayrimenkul Ofisi"
                 fill
                 className="object-cover"
@@ -113,7 +108,7 @@ export default function AboutSection() {
             <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-6 max-w-xs">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
-                  1000+
+                  500+
                 </div>
                 <div className="text-gray-600">Mutlu Müşteri</div>
                 <div className="flex justify-center mt-2">

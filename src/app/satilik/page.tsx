@@ -113,11 +113,24 @@ export default function SatilikPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section
-        className="relative bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-700
- text-white py-24"
-      >
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+      <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-16 overflow-hidden">
+        {/* Modern Glassmorphism Background */}
+        <div className="absolute inset-0">
+          {/* Multiple Glassmorphism Layers */}
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-2xl"></div>
+          {/* Glassmorphism Shapes */}
+          <div className="absolute inset-0">
+            {/* Glassmorphism Circle */}
+            <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
+            <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
+          </div>
+          {/* Additional Glassmorphism Effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent backdrop-blur-xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent backdrop-blur-xl"></div>
+        </div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Satılık Emlak</h1>
           <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">

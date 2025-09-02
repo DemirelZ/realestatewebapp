@@ -224,6 +224,17 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8">
+          {/* Güven ve İtibar */}
+          <div className="text-center mb-8">
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              <div className="inline-flex items-center gap-2 bg-gray-800 rounded-full px-4 py-2 border border-gray-700">
+                <span className="text-gray-300 text-sm font-medium">
+                  ATEM - Ankara Tüm Emlakçılar Meslek Esnaf Odası Üyesi
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               © 2024 Neşeli Gayrimenkul. Tüm hakları saklıdır.
