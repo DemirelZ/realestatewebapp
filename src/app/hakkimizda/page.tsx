@@ -5,7 +5,13 @@ export default function HakkimizdaPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-24">
+      <section
+        className="relative bg-gradient-to-r from-gray-800 via-slate-700 to-indigo-800
+
+
+
+ text-white py-24"
+      >
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Hakkımızda</h1>
