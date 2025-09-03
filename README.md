@@ -2,6 +2,52 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Firebase setup
+
+1. Install deps (already added):
+
+```
+npm install firebase
+```
+
+2. Create a Firebase project and enable Firestore (Native/Production mode or Test mode as you prefer).
+
+3. Add a Web App in Firebase console and copy the config. Add the following env variables in a `.env.local` file at the project root:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+4. Create a `properties` collection in Firestore. Use numeric document IDs (e.g. `1`, `2`, `3`) to match the app’s routing. Example document data:
+
+```
+{
+  "title": "Modern 3+1 Daire",
+  "location": "Kadıköy, İstanbul",
+  "price": "2.500.000 TL",
+  "type": "Satılık",
+  "category": "Konut",
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "image": "/images/properties/modern-apartment.jpg",
+  "featured": true,
+  "housingSpecs": {
+    "brutMetrekare": 130,
+    "netMetrekare": 110
+  }
+}
+```
+
+5. Test APIs locally:
+
+- List: `GET /api/properties`
+- Get by id: `GET /api/properties/1`
+
 First, run the development server:
 
 ```bash

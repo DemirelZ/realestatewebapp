@@ -45,7 +45,9 @@ export type Property = {
   category?: "Konut" | "Arsa"; // Opsiyonel kategori
   bedrooms: number;
   bathrooms: number;
-  image: string;
+  image: string; // Geriye uyumluluk için korundu
+  images: string[]; // Yeni: Çoklu resim desteği (maksimum 10)
+  mainImage: string; // Yeni: Ana resim (gallery'de ilk gösterilecek)
   featured: boolean;
   landSpecs?: LandSpecs;
   housingSpecs?: HousingSpecs;
@@ -53,7 +55,7 @@ export type Property = {
 
 export const allProperties: Property[] = [
   {
-    id: 1,
+    id: 11,
     title: "Modern 3+1 Daire",
     location: "Kadıköy, İstanbul",
     price: "2.500.000 TL",
@@ -61,7 +63,9 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 3,
     bathrooms: 2,
-    image: "/images/properties/modern-apartment.jpg",
+    image: "", // Geriye uyumluluk
+    images: [], // Henüz resim yok
+    mainImage: "", // Ana resim yok
     featured: true,
     housingSpecs: {
       brutMetrekare: 130,
@@ -79,6 +83,44 @@ export const allProperties: Property[] = [
       siteIcerisinde: true,
       siteAdi: "Moda Park Evleri",
       aidat: "1.200 TL",
+      description: "Modern 3+1 Daire",
+      url: "https://www.google.com",
+    },
+  },
+  {
+    id: 1,
+    title: "Modern 3+1 Daire",
+    location: "Kadıköy, İstanbul",
+    price: "2.500.000 TL",
+    type: "Satılık",
+    category: "Konut",
+    bedrooms: 3,
+    bathrooms: 2,
+    image: "/images/properties/modern-apartment.jpg", // Geriye uyumluluk
+    images: [
+      "/images/properties/modern-apartment.jpg",
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+    ],
+    mainImage: "/images/properties/modern-apartment.jpg", // Ana resim
+    featured: true,
+    housingSpecs: {
+      brutMetrekare: 130,
+      netMetrekare: 110,
+      binaYasi: 5,
+      katSayisi: 10,
+      isitma: "Doğalgaz (Kombi)",
+      mutfak: "Açık",
+      banyoSayisi: 2,
+      otopark: true,
+      balkon: true,
+      asansor: true,
+      esyali: false,
+      kullanimDurumu: "Boş",
+      siteIcerisinde: true,
+      siteAdi: "Moda Park Evleri",
+      aidat: "1.200 TL",
+      description: "Lüks Villa",
       url: "https://www.google.com",
     },
   },
@@ -92,7 +134,14 @@ export const allProperties: Property[] = [
     bedrooms: 5,
     bathrooms: 4,
     image:
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop", // Geriye uyumluluk
+    images: [
       "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
+    ],
+    mainImage:
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop", // Ana resim
     featured: true,
     housingSpecs: {
       brutMetrekare: 380,
@@ -110,6 +159,7 @@ export const allProperties: Property[] = [
       kullanimDurumu: "Mal Sahibi",
       siteIcerisinde: false,
       aidat: "-",
+      description: "Merkezi Konumda 2+1",
       url: "https://www.google.com",
     },
   },
@@ -122,7 +172,12 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 2,
     bathrooms: 1,
-    image: "/images/properties/central-apartment.jpg",
+    image: "/images/properties/central-apartment.jpg", // Geriye uyumluluk
+    images: [
+      "/images/properties/central-apartment.jpg",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+    ],
+    mainImage: "/images/properties/central-apartment.jpg", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 95,
@@ -140,6 +195,7 @@ export const allProperties: Property[] = [
       siteIcerisinde: true,
       siteAdi: "Atakule Rezidans",
       aidat: "900 TL",
+      description: "Deniz Manzaralı Arsa",
       url: "https://www.google.com",
     },
   },
@@ -153,7 +209,13 @@ export const allProperties: Property[] = [
     bedrooms: 0,
     bathrooms: 0,
     image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop", // Geriye uyumluluk
+    images: [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+    ],
+    mainImage:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop", // Ana resim
     featured: true,
     landSpecs: {
       imarDurumu: "Konut İmarlı",
@@ -167,6 +229,7 @@ export const allProperties: Property[] = [
       krediyeUygunluk: "Evet",
       tapuDurumu: "Hisseli Değil",
       takas: "Değerlendirilebilir",
+      description: "Ticari Ofis",
       url: "https://www.google.com",
     },
   },
@@ -179,7 +242,12 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 0,
     bathrooms: 2,
-    image: "/images/properties/office-space.jpg",
+    image: "/images/properties/office-space.jpg", // Geriye uyumluluk
+    images: [
+      "/images/properties/office-space.jpg",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+    ],
+    mainImage: "/images/properties/office-space.jpg", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 210,
@@ -197,6 +265,7 @@ export const allProperties: Property[] = [
       siteIcerisinde: true,
       siteAdi: "Levent Plaza",
       aidat: "2.500 TL",
+      description: "Bahçeli Müstakil Ev",
       url: "https://www.google.com",
     },
   },
@@ -210,7 +279,14 @@ export const allProperties: Property[] = [
     bedrooms: 3,
     bathrooms: 2,
     image:
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop", // Geriye uyumluluk
+    images: [
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
+    ],
+    mainImage:
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 170,
@@ -227,6 +303,7 @@ export const allProperties: Property[] = [
       kullanimDurumu: "Boş",
       siteIcerisinde: false,
       aidat: "-",
+      description: "Modern 3+1 Daire",
       url: "https://www.google.com",
     },
   },

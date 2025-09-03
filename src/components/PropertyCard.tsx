@@ -7,11 +7,15 @@ type PropertyCardProps = {
 };
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const imageSrc =
+    property.mainImage && property.mainImage.trim() !== ""
+      ? property.mainImage
+      : "/images/no-images.png";
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-64">
         <Image
-          src={property.image}
+          src={imageSrc}
           alt={property.title}
           fill
           className="object-cover"

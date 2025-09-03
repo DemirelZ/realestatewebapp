@@ -1,117 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { allProperties } from "@/data/properties";
+import ListingCard from "@/components/ListingCard";
+import Link from "next/link";
 
-// Örnek kiralık emlak verileri
-const kiralikEmlaklar = [
-  {
-    id: 1,
-    title: "Şehir Merkezi 2+1 Daire",
-    location: "Beşiktaş, İstanbul",
-    price: "8.500 TL",
-    period: "Aylık",
-    area: "95m²",
-    rooms: "2+1",
-    floor: "3/7",
-    age: "5 yıl",
-    image:
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop",
-    features: ["Asansör", "Otopark", "Güvenlik", "Merkezi Isıtma"],
-    description:
-      "Beşiktaş'ın kalbinde, metro ve otobüs duraklarına yürüme mesafesinde. Market ve restoranlara yakın.",
-  },
-  {
-    id: 2,
-    title: "Bahçeli Müstakil Ev",
-    location: "Çankaya, Ankara",
-    price: "12.000 TL",
-    period: "Aylık",
-    area: "160m²",
-    rooms: "3+1",
-    floor: "Bahçe Katı",
-    age: "8 yıl",
-    image:
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&h=300&fit=crop",
-    features: ["Bahçe", "Otopark", "Güvenlik", "Şömine"],
-    description:
-      "Çankaya'nın en güzel semtlerinden birinde, geniş bahçeli ev. Okul ve hastane yakınında.",
-  },
-  {
-    id: 3,
-    title: "Deniz Manzaralı Lüks Daire",
-    location: "Karşıyaka, İzmir",
-    price: "15.000 TL",
-    period: "Aylık",
-    area: "120m²",
-    rooms: "2+1",
-    floor: "10/12",
-    age: "3 yıl",
-    image:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop",
-    features: ["Deniz Manzarası", "Havuz", "Spor Salonu", "Güvenlik"],
-    description:
-      "İzmir Körfezi manzaralı, lüks donanımlı daire. Sahil şeridinde, yürüyüş yollarına yakın.",
-  },
-  {
-    id: 4,
-    title: "Tarihi Konak",
-    location: "Osmangazi, Bursa",
-    price: "18.000 TL",
-    period: "Aylık",
-    area: "200m²",
-    rooms: "4+1",
-    floor: "2 Katlı",
-    age: "Tarihi",
-    image:
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&h=300&fit=crop",
-    features: ["Tarihi Dokunun Korunması", "Bahçe", "Otopark", "Şömine"],
-    description:
-      "Bursa'nın tarihi dokusunda, modern konforla birleştirilmiş konak. Tarihi merkeze yakın.",
-  },
-  {
-    id: 5,
-    title: "Villa Kiralık",
-    location: "Beykoz, İstanbul",
-    price: "25.000 TL",
-    period: "Aylık",
-    area: "250m²",
-    rooms: "4+2",
-    floor: "2 Katlı",
-    age: "7 yıl",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=500&h=300&fit=crop",
-    features: ["Havuz", "Bahçe", "Otopark", "Güvenlik", "Akıllı Ev"],
-    description:
-      "Beykoz'un en güzel noktalarından birinde, lüks villa. Orman ve deniz manzarası.",
-  },
-  {
-    id: 6,
-    title: "Ofis Katı",
-    location: "Şişli, İstanbul",
-    price: "20.000 TL",
-    period: "Aylık",
-    area: "180m²",
-    rooms: "Açık Ofis",
-    floor: "6/15",
-    age: "4 yıl",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&h=300&fit=crop",
-    features: ["Asansör", "Otopark", "Güvenlik", "Merkezi Konum"],
-    description:
-      "Şişli'nin iş merkezinde, modern ofis katı. Metro ve otobüs duraklarına yakın.",
-  },
-];
+// allProperties kullanılacak, yerel örnek veriler kaldırıldı
 
 export default function KiralikPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [selectedRoomType, setSelectedRoomType] = useState("");
 
-  const filteredEmlaklar = kiralikEmlaklar.filter((emlak) => {
+  const kiraliklar = allProperties.filter((p) => p.type === "Kiralık");
+
+  const filteredEmlaklar = kiraliklar.filter((emlak) => {
     if (selectedLocation && !emlak.location.includes(selectedLocation))
       return false;
-    if (selectedRoomType && !emlak.rooms.includes(selectedRoomType))
+    if (selectedRoomType && !String(emlak.bedrooms).includes(selectedRoomType))
       return false;
     return true;
   });
@@ -141,7 +47,7 @@ export default function KiralikPage() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Kiralık Emlak</h1>
           <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
             İhtiyacınıza uygun kiralık emlakları keşfedin! Neşeli
-            Gayrimenkul'den güvenilir kiralık seçenekler
+            Gayrimenkul&#39;den güvenilir kiralık seçenekler
           </p>
         </div>
       </section>
@@ -219,90 +125,7 @@ export default function KiralikPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEmlaklar.map((emlak) => (
-              <div
-                key={emlak.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className="relative h-64">
-                  <Image
-                    src={emlak.image}
-                    alt={emlak.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {emlak.price} {emlak.period}
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {emlak.title}
-                  </h3>
-
-                  <div className="flex items-center text-gray-600 mb-3">
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    {emlak.location}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {emlak.area}
-                      </div>
-                      <div className="text-sm text-gray-600">Metrekare</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-teal-600">
-                        {emlak.rooms}
-                      </div>
-                      <div className="text-sm text-gray-600">Oda</div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {emlak.features.slice(0, 3).map((feature, index) => (
-                      <span
-                        key={index}
-                        className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {emlak.description}
-                  </p>
-
-                  <div className="flex justify-between items-center">
-                    <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
-                      Detayları Gör
-                    </button>
-                    <button className="text-green-600 hover:text-green-700 font-medium text-sm">
-                      Favorilere Ekle
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ListingCard key={emlak.id} property={emlak} />
             ))}
           </div>
         </div>
@@ -325,12 +148,12 @@ export default function KiralikPage() {
             >
               İletişime Geçin
             </a>
-            <a
+            <Link
               href="/"
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               Ana Sayfaya Dön
-            </a>
+            </Link>
           </div>
         </div>
       </section>

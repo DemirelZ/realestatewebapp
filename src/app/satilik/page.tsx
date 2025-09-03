@@ -1,112 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-
-// Örnek satılık emlak verileri
-const satilikEmlaklar = [
-  {
-    id: 1,
-    title: "Modern 3+1 Daire",
-    location: "Kadıköy, İstanbul",
-    price: "2.450.000 TL",
-    area: "125m²",
-    rooms: "3+1",
-    floor: "5/8",
-    age: "2 yıl",
-    image:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&h=300&fit=crop",
-    features: ["Asansör", "Otopark", "Güvenlik", "Merkezi Isıtma"],
-    description:
-      "Kadıköy'ün en merkezi lokasyonunda, yeni yapılmış modern daire. Metro ve otobüs duraklarına yürüme mesafesinde.",
-  },
-  {
-    id: 2,
-    title: "Bahçeli Müstakil Ev",
-    location: "Çankaya, Ankara",
-    price: "3.800.000 TL",
-    area: "180m²",
-    rooms: "4+1",
-    floor: "Bahçe Katı",
-    age: "5 yıl",
-    image:
-      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&h=300&fit=crop",
-    features: ["Bahçe", "Otopark", "Güvenlik", "Şömine"],
-    description:
-      "Çankaya'nın en prestijli semtinde, geniş bahçeli müstakil ev. Okul ve hastane yakınında.",
-  },
-  {
-    id: 3,
-    title: "Deniz Manzaralı Lüks Daire",
-    location: "Karşıyaka, İzmir",
-    price: "4.200.000 TL",
-    area: "140m²",
-    rooms: "3+1",
-    floor: "12/15",
-    age: "1 yıl",
-    image:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop",
-    features: ["Deniz Manzarası", "Havuz", "Spor Salonu", "Güvenlik"],
-    description:
-      "İzmir Körfezi manzaralı, lüks donanımlı yeni daire. Sahil şeridinde, yürüyüş yollarına yakın.",
-  },
-  {
-    id: 4,
-    title: "Tarihi Konak Restorasyonlu",
-    location: "Osmangazi, Bursa",
-    price: "5.500.000 TL",
-    area: "220m²",
-    rooms: "5+2",
-    floor: "2 Katlı",
-    age: "Restorasyonlu",
-    image:
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&h=300&fit=crop",
-    features: ["Tarihi Dokunun Korunması", "Bahçe", "Otopark", "Şömine"],
-    description:
-      "Bursa'nın tarihi dokusunda, modern konforla birleştirilmiş restorasyonlu konak. Tarihi merkeze yakın.",
-  },
-  {
-    id: 5,
-    title: "Villa Projesi",
-    location: "Beykoz, İstanbul",
-    price: "8.900.000 TL",
-    area: "280m²",
-    rooms: "5+2",
-    floor: "3 Katlı",
-    age: "Yeni Proje",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=500&h=300&fit=crop",
-    features: ["Havuz", "Bahçe", "Otopark", "Güvenlik", "Akıllı Ev"],
-    description:
-      "Beykoz'un en güzel noktalarından birinde, lüks villa projesi. Orman ve deniz manzarası.",
-  },
-  {
-    id: 6,
-    title: "Ofis Katı",
-    location: "Şişli, İstanbul",
-    price: "6.750.000 TL",
-    area: "200m²",
-    rooms: "Açık Ofis",
-    floor: "8/15",
-    age: "3 yıl",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&h=300&fit=crop",
-    features: ["Asansör", "Otopark", "Güvenlik", "Merkezi Konum"],
-    description:
-      "Şişli'nin iş merkezinde, modern ofis katı. Metro ve otobüs duraklarına yakın, iş merkezlerine kolay erişim.",
-  },
-];
+import { allProperties } from "@/data/properties";
+import ListingCard from "@/components/ListingCard";
+import Link from "next/link";
 
 export default function SatilikPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [selectedRoomType, setSelectedRoomType] = useState("");
 
-  const filteredEmlaklar = satilikEmlaklar.filter((emlak) => {
+  const satiliklar = allProperties.filter((p) => p.type === "Satılık");
+
+  const filteredEmlaklar = satiliklar.filter((emlak) => {
     if (selectedLocation && !emlak.location.includes(selectedLocation))
       return false;
-    if (selectedRoomType && !emlak.rooms.includes(selectedRoomType))
+    if (selectedRoomType && !String(emlak.bedrooms).includes(selectedRoomType))
       return false;
+    // Fiyat aralığı basit örnek (string fiyatlardan sayıya çevirmeden simge olarak kontrol edilmiyor)
     return true;
   });
 
@@ -134,7 +45,7 @@ export default function SatilikPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Satılık Emlak</h1>
           <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-            Hayalinizdeki eve sahip olun! Neşeli Gayrimenkul'den özel seçim
+            Hayalinizdeki eve sahip olun! Neşeli Gayrimenkul&#39;den özel seçim
             satılık emlaklar
           </p>
         </div>
@@ -214,90 +125,7 @@ export default function SatilikPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEmlaklar.map((emlak) => (
-              <div
-                key={emlak.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className="relative h-64">
-                  <Image
-                    src={emlak.image}
-                    alt={emlak.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {emlak.price}
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {emlak.title}
-                  </h3>
-
-                  <div className="flex items-center text-gray-600 mb-3">
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    {emlak.location}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {emlak.area}
-                      </div>
-                      <div className="text-sm text-gray-600">Metrekare</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {emlak.rooms}
-                      </div>
-                      <div className="text-sm text-gray-600">Oda</div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {emlak.features.slice(0, 3).map((feature, index) => (
-                      <span
-                        key={index}
-                        className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {emlak.description}
-                  </p>
-
-                  <div className="flex justify-between items-center">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
-                      Detayları Gör
-                    </button>
-                    <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-                      Favorilere Ekle
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ListingCard key={emlak.id} property={emlak} />
             ))}
           </div>
         </div>
@@ -320,12 +148,12 @@ export default function SatilikPage() {
             >
               İletişime Geçin
             </a>
-            <a
+            <Link
               href="/"
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               Ana Sayfaya Dön
-            </a>
+            </Link>
           </div>
         </div>
       </section>
