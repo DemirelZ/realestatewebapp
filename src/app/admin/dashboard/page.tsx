@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getFirebaseClients } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { getAllPropertiesFromDb, deleteProperty } from "@/lib/firestore";
 
 export default function AdminDashboardPage() {
@@ -12,13 +12,19 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [items, setItems] = useState<any[]>([]);
+  type DashboardProperty = {
+    id: number;
+    title: string;
+    type: string;
+    price: string;
+  };
+  const [items, setItems] = useState<DashboardProperty[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     console.log("Dashboard useEffect running, auth:", auth);
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    const unsub = onAuthStateChanged(auth, async (u: User | null) => {
       console.log("Auth state changed:", u);
       if (!u) {
         console.log("No user, setting logged out");
@@ -33,9 +39,15 @@ export default function AdminDashboardPage() {
         const data = await getAllPropertiesFromDb();
         console.log("Properties fetched:", data);
         setItems(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching properties:", err);
-        setError(err?.message ?? "Veriler alınamadı");
+        const message =
+          typeof err === "object" && err && "message" in err
+            ? String(
+                (err as { message?: unknown }).message ?? "Veriler alınamadı"
+              )
+            : "Veriler alınamadı";
+        setError(message);
       } finally {
         console.log("Setting loading to false");
         setLoading(false);
@@ -64,10 +76,12 @@ export default function AdminDashboardPage() {
       // Silinen property'yi listeden kaldır
       setItems((prev) => prev.filter((item) => item.id !== id));
       setError(null);
-    } catch (err: any) {
-      setError(
-        "İlan silinirken hata oluştu: " + (err?.message ?? "Bilinmeyen hata")
-      );
+    } catch (err: unknown) {
+      const msg =
+        typeof err === "object" && err && "message" in err
+          ? String((err as { message?: unknown }).message ?? "Bilinmeyen hata")
+          : "Bilinmeyen hata";
+      setError("İlan silinirken hata oluştu: " + msg);
     } finally {
       setDeletingId(null);
     }
@@ -113,6 +127,12 @@ export default function AdminDashboardPage() {
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Yeni İlan
+            </Link>
+            <Link
+              href="/admin/team/new"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Kişi Ekle
             </Link>
             <button
               onClick={handleSignOut}

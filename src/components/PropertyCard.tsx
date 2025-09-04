@@ -8,8 +8,14 @@ type PropertyCardProps = {
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   const imageSrc =
-    property.mainImage && property.mainImage.trim() !== ""
+    property.images &&
+    property.images.length > 0 &&
+    property.images[0].trim() !== ""
+      ? property.images[0]
+      : property.mainImage && property.mainImage.trim() !== ""
       ? property.mainImage
+      : property.image && property.image.trim() !== ""
+      ? property.image
       : "/images/no-images.png";
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">

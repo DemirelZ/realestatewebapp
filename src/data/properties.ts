@@ -36,6 +36,16 @@ export type HousingSpecs = {
   url?: string;
 };
 
+export type ResponsiblePerson = {
+  name: string;
+  title?: string;
+  phone: string;
+  email?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+};
+
 export type Property = {
   id: number;
   title: string;
@@ -43,11 +53,15 @@ export type Property = {
   price: string;
   type: "Satılık" | "Kiralık";
   category?: "Konut" | "Arsa"; // Opsiyonel kategori
+  responsiblePerson?: ResponsiblePerson;
   bedrooms: number;
   bathrooms: number;
-  image: string; // Geriye uyumluluk için korundu
-  images: string[]; // Yeni: Çoklu resim desteği (maksimum 10)
-  mainImage: string; // Yeni: Ana resim (gallery'de ilk gösterilecek)
+  /** @deprecated Tekil image kullanılmamalı. images[0] ana görsel olarak kullanılmalı. */
+  image?: string; // Geriye uyumluluk için korundu
+  /** Çoklu resim desteği; images[0] ana görsel olarak kabul edilir */
+  images?: string[];
+  /** @deprecated Ana görsel alanı; yerine images[0] kullanılmalı. */
+  mainImage?: string; // Geriye uyumluluk için korundu
   featured: boolean;
   landSpecs?: LandSpecs;
   housingSpecs?: HousingSpecs;
@@ -63,9 +77,7 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 3,
     bathrooms: 2,
-    image: "", // Geriye uyumluluk
     images: [], // Henüz resim yok
-    mainImage: "", // Ana resim yok
     featured: true,
     housingSpecs: {
       brutMetrekare: 130,
@@ -96,13 +108,11 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 3,
     bathrooms: 2,
-    image: "/images/properties/modern-apartment.jpg", // Geriye uyumluluk
     images: [
       "/images/properties/modern-apartment.jpg",
       "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
     ],
-    mainImage: "/images/properties/modern-apartment.jpg", // Ana resim
     featured: true,
     housingSpecs: {
       brutMetrekare: 130,
@@ -133,15 +143,11 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 5,
     bathrooms: 4,
-    image:
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop", // Geriye uyumluluk
     images: [
       "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
     ],
-    mainImage:
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop", // Ana resim
     featured: true,
     housingSpecs: {
       brutMetrekare: 380,
@@ -172,12 +178,10 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 2,
     bathrooms: 1,
-    image: "/images/properties/central-apartment.jpg", // Geriye uyumluluk
     images: [
       "/images/properties/central-apartment.jpg",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
     ],
-    mainImage: "/images/properties/central-apartment.jpg", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 95,
@@ -208,14 +212,10 @@ export const allProperties: Property[] = [
     category: "Arsa",
     bedrooms: 0,
     bathrooms: 0,
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop", // Geriye uyumluluk
     images: [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
     ],
-    mainImage:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop", // Ana resim
     featured: true,
     landSpecs: {
       imarDurumu: "Konut İmarlı",
@@ -242,12 +242,10 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 0,
     bathrooms: 2,
-    image: "/images/properties/office-space.jpg", // Geriye uyumluluk
     images: [
       "/images/properties/office-space.jpg",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
     ],
-    mainImage: "/images/properties/office-space.jpg", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 210,
@@ -278,15 +276,11 @@ export const allProperties: Property[] = [
     category: "Konut",
     bedrooms: 3,
     bathrooms: 2,
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop", // Geriye uyumluluk
     images: [
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&h=400&fit=crop",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
     ],
-    mainImage:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop", // Ana resim
     featured: false,
     housingSpecs: {
       brutMetrekare: 170,

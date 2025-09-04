@@ -8,8 +8,14 @@ type ListingCardProps = {
 
 export default function ListingCard({ property }: ListingCardProps) {
   const imageSrc =
-    property.mainImage && property.mainImage.trim() !== ""
+    property.images &&
+    property.images.length > 0 &&
+    property.images[0].trim() !== ""
+      ? property.images[0]
+      : property.mainImage && property.mainImage.trim() !== ""
       ? property.mainImage
+      : property.image && property.image.trim() !== ""
+      ? property.image
       : "/images/no-images.png";
   const isRental = property.type === "Kiralık";
   const badgeColor = isRental ? "bg-green-600" : "bg-blue-600";

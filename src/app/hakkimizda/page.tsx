@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import TeamSection from "@/components/TeamSection";
 
 export default function HakkimizdaPage() {
   return (
@@ -41,19 +42,20 @@ export default function HakkimizdaPage() {
                 Hikayemiz
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                2014 yılında İstanbul'da kurulan Neşeli Gayrimenkul, emlak
+                2014 yılında İstanbul&apos;da kurulan Neşeli Gayrimenkul, emlak
                 sektöründe güvenilirlik ve kalite standartlarını yükseltmeyi
                 hedefleyen bir aile şirketi olarak yola çıktı.
               </p>
               <p className="text-lg text-gray-600 mb-6">
-                Kurucumuz Ahmet Neşeli'nin 20 yıllık emlak deneyimi ve vizyonu
-                ile, müşterilerimize sadece ev satmak değil, hayal kurmak ve bu
-                hayalleri gerçeğe dönüştürmek için hizmet veriyoruz.
+                Kurucumuz Ahmet Neşeli&apos;nin 20 yıllık emlak deneyimi ve
+                vizyonu ile, müşterilerimize sadece ev satmak değil, hayal
+                kurmak ve bu hayalleri gerçeğe dönüştürmek için hizmet
+                veriyoruz.
               </p>
               <p className="text-lg text-gray-600">
-                Bugün 50'den fazla deneyimli emlak danışmanımız ile İstanbul,
-                Ankara, İzmir ve Bursa'da hizmet veriyor, her yıl binlerce
-                ailenin hayalindeki eve kavuşmasına yardımcı oluyoruz.
+                Bugün 50&apos;den fazla deneyimli emlak danışmanımız ile
+                İstanbul, Ankara, İzmir ve Bursa&apos;da hizmet veriyor, her yıl
+                binlerce ailenin hayalindeki eve kavuşmasına yardımcı oluyoruz.
               </p>
             </div>
             <div className="relative">
@@ -128,8 +130,8 @@ export default function HakkimizdaPage() {
                 Vizyonumuz
               </h3>
               <p className="text-gray-600">
-                Türkiye'nin en güvenilir ve tercih edilen emlak şirketi olmak,
-                teknoloji ve inovasyon ile sektöre öncülük etmek.
+                Türkiye&apos;nin en güvenilir ve tercih edilen emlak şirketi
+                olmak, teknoloji ve inovasyon ile sektöre öncülük etmek.
               </p>
             </div>
           </div>
@@ -144,7 +146,8 @@ export default function HakkimizdaPage() {
               Değerlerimiz
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Neşeli Gayrimenkul'ün temelini oluşturan değerler ve prensipler
+              Neşeli Gayrimenkul&apos;ün temelini oluşturan değerler ve
+              prensipler
             </p>
           </div>
 
@@ -307,89 +310,8 @@ export default function HakkimizdaPage() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Ekibimiz
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Deneyimli ve uzman kadromuz ile size en iyi hizmeti sunuyoruz
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* CEO */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="relative h-64">
-                <Image
-                  src="/images/about/ceo.jpg"
-                  alt="Ahmet Neşeli - CEO"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Ahmet Neşeli
-                </h3>
-                <p className="text-blue-600 font-medium mb-2">Kurucu & CEO</p>
-                <p className="text-gray-600 text-sm">
-                  20 yıllık emlak deneyimi ile sektörün önde gelen isimlerinden.
-                  Müşteri memnuniyeti odaklı yaklaşımı ile tanınıyor.
-                </p>
-              </div>
-            </div>
-
-            {/* Sales Manager */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="relative h-64">
-                <Image
-                  src="/images/about/sales-manager.jpg"
-                  alt="Ayşe Yılmaz - Satış Müdürü"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Ayşe Yılmaz
-                </h3>
-                <p className="text-blue-600 font-medium mb-2">Satış Müdürü</p>
-                <p className="text-gray-600 text-sm">
-                  15 yıllık satış deneyimi ile ekibimizi yönetiyor. Müşteri
-                  ilişkileri konusunda uzman.
-                </p>
-              </div>
-            </div>
-
-            {/* Marketing Manager */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="relative h-64">
-                <Image
-                  src="/images/about/marketing-manager.jpg"
-                  alt="Mehmet Demir - Pazarlama Müdürü"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Mehmet Demir
-                </h3>
-                <p className="text-blue-600 font-medium mb-2">
-                  Pazarlama Müdürü
-                </p>
-                <p className="text-gray-600 text-sm">
-                  Dijital pazarlama ve teknoloji konularında uzman. Markamızın
-                  dijital dönüşümünü yönetiyor.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Team - renders only when data exists */}
+      <TeamSection />
 
       {/* Stats */}
       <section className="py-16 bg-blue-600 text-white">
