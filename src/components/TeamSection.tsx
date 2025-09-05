@@ -51,9 +51,7 @@ export default function TeamSection() {
               <div className="relative h-64">
                 <Image
                   src={
-                    m.image && m.image.trim() !== ""
-                      ? m.image
-                      : "/images/no-image.png"
+                    m.image && m.image.trim() !== "" ? m.image : "/no-image.png"
                   }
                   alt={`${m.name} - ${m.title ?? "Ekip Üyesi"}`}
                   fill

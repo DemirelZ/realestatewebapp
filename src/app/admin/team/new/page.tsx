@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { createTeamMember } from "@/lib/team";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export default function NewTeamMemberPage() {
   const { auth, storage } = getFirebaseClients();
@@ -22,6 +22,70 @@ export default function NewTeamMemberPage() {
   const [order, setOrder] = useState<number>(0);
   const [visible, setVisible] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+
+  // basic validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?[0-9\s\-()]{7,}$/;
+  const isEmailValid = email.trim() === "" || emailRegex.test(email.trim());
+  const isPhoneValid = phone.trim() === "" || phoneRegex.test(phone.trim());
+  const isValid =
+    name.trim().length > 0 && isEmailValid && isPhoneValid && (order ?? 0) >= 0;
+  const canSave = allowed && !saving && isValid;
+
+  function withTimeout<T>(promise: Promise<T>, ms: number, label: string) {
+    return Promise.race<T>([
+      promise,
+      new Promise<T>((_resolve, reject) =>
+        setTimeout(() => reject(new Error(label + " zaman aşımı")), ms)
+      ),
+    ]);
+  }
+
+  async function uploadImageWithProgress(file: File): Promise<string> {
+    // validate type and size
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Desteklenmeyen dosya türü. Lütfen JPG/PNG/WEBP seçin.");
+    }
+    const maxSizeBytes = 8 * 1024 * 1024; // 8MB
+    if (file.size > maxSizeBytes) {
+      throw new Error("Dosya çok büyük (maks 8MB)");
+    }
+
+    const safeName = file.name
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9._-]/g, "");
+    const fileRef = ref(storage, `team/${Date.now()}-${safeName || "upload"}`);
+
+    return await new Promise<string>((resolve, reject) => {
+      const task = uploadBytesResumable(fileRef, file, {
+        contentType: file.type,
+      });
+      task.on(
+        "state_changed",
+        (snap) => {
+          const pct = Math.round(
+            (snap.bytesTransferred / snap.totalBytes) * 100
+          );
+          setUploadProgress(pct);
+        },
+        (err) => {
+          reject(err);
+        },
+        async () => {
+          try {
+            const url = await getDownloadURL(task.snapshot.ref);
+            resolve(url);
+          } catch (e) {
+            reject(e);
+          }
+        }
+      );
+    });
+  }
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -33,29 +97,62 @@ export default function NewTeamMemberPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!allowed) return;
+    if (!isValid) {
+      setError("Lütfen formu kontrol edin");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
+      console.log("[TEAM] Submit started");
       let imageUrl = "";
       if (imageFile) {
-        const fileRef = ref(storage, `team/${Date.now()}-${imageFile.name}`);
-        await uploadBytes(fileRef, imageFile);
-        imageUrl = await getDownloadURL(fileRef);
+        console.log("[TEAM] Upload starting", imageFile.name, imageFile.size);
+        setUploadProgress(0);
+        setUploadMessage(null);
+        try {
+          imageUrl = await withTimeout(
+            uploadImageWithProgress(imageFile),
+            60000,
+            "Yükleme"
+          );
+          console.log("[TEAM] Upload success");
+        } catch (uploadErr) {
+          const msg =
+            uploadErr instanceof Error
+              ? uploadErr.message
+              : "Fotoğraf yükleme başarısız";
+          console.warn(
+            "[TEAM] Upload failed, saving without image:",
+            uploadErr
+          );
+          setUploadMessage(msg + ". Görsel olmadan kaydedilecek.");
+        } finally {
+          setUploadProgress(null);
+        }
       }
-      await createTeamMember({
-        name,
-        title: title || undefined,
-        phone: phone || undefined,
-        email: email || undefined,
-        description: description || undefined,
-        image: imageUrl || undefined,
-        order,
-        visible,
-      });
+      await withTimeout(
+        createTeamMember({
+          name,
+          title: title || undefined,
+          phone: phone || undefined,
+          email: email || undefined,
+          description: description || undefined,
+          image: imageUrl || undefined,
+          order,
+          visible,
+        }),
+        15000,
+        "Kayıt"
+      );
+      console.log("[TEAM] Create success");
       router.replace("/admin/dashboard");
-    } catch (err: any) {
-      setError(err?.message ?? "Kayıt başarısız");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Kayıt başarısız";
+      console.error("[TEAM] Submit error:", err);
+      setError(message);
     } finally {
+      console.log("[TEAM] Submit finished");
       setSaving(false);
     }
   }
@@ -163,6 +260,16 @@ export default function NewTeamMemberPage() {
               onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
+            {uploadProgress !== null && (
+              <div className="mt-2 text-sm text-gray-700">
+                Yükleme: {uploadProgress}%
+              </div>
+            )}
+            {uploadMessage && (
+              <div className="mt-1 text-xs text-yellow-700">
+                {uploadMessage}
+              </div>
+            )}
           </div>
           <div>
             <label className="inline-flex items-center gap-2 cursor-pointer">
@@ -178,7 +285,7 @@ export default function NewTeamMemberPage() {
           {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
           <div className="flex justify-end">
             <button
-              disabled={saving}
+              disabled={!canSave}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-60 transition-colors"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}

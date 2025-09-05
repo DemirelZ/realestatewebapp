@@ -5,6 +5,7 @@ import {
   getDocs,
   query,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 import { getFirebaseClients } from "./firebase";
 
@@ -46,9 +47,12 @@ export async function createTeamMember(
     visible: true,
     ...data,
   };
-  const { setDoc } = await import("firebase/firestore");
-  await setDoc(newRef, payload);
-  return { id: newRef.id, ...(payload as CreateTeamMember) } as TeamMember;
+  // remove undefined fields to avoid Firestore errors
+  const sanitized = Object.fromEntries(
+    Object.entries(payload).filter(([, v]) => v !== undefined)
+  ) as CreateTeamMember;
+  await setDoc(newRef, sanitized);
+  return { id: newRef.id, ...(sanitized as CreateTeamMember) } as TeamMember;
 }
 
 export async function updateTeamMember(
@@ -57,7 +61,11 @@ export async function updateTeamMember(
 ): Promise<void> {
   const { db } = getFirebaseClients();
   const ref = doc(collection(db, COLLECTION), id);
-  await updateDoc(ref, data as any);
+  // remove undefined fields to avoid Firestore errors
+  const sanitized = Object.fromEntries(
+    Object.entries(data).filter(([, v]) => v !== undefined)
+  ) as Partial<CreateTeamMember>;
+  await updateDoc(ref, sanitized as any);
 }
 
 export async function deleteTeamMember(id: string): Promise<void> {
