@@ -53,6 +53,12 @@ export default function Header() {
               Hakkımızda
             </Link>
             <Link
+              href="/duyurular"
+              className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Duyurular
+            </Link>
+            <Link
               href="/iletisim"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
@@ -129,6 +135,12 @@ export default function Header() {
                 className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
               >
                 Hakkımızda
+              </Link>
+              <Link
+                href="/duyurular"
+                className="text-gray-700 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Duyurular
               </Link>
               <Link
                 href="/iletisim"

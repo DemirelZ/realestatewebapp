@@ -48,14 +48,17 @@ export default function TeamSection() {
               key={m.id}
               className="bg-white rounded-2xl shadow-lg overflow-hidden"
             >
-              <div className="relative h-64">
+              <div className="relative h-64 bg-gray-100">
                 <Image
                   src={
-                    m.image && m.image.trim() !== "" ? m.image : "/no-image.png"
+                    m.image && m.image.trim() !== ""
+                      ? m.image
+                      : "/images/blank-profile-picture.png"
                   }
                   alt={`${m.name} - ${m.title ?? "Ekip Üyesi"}`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 />
               </div>
               <div className="p-6 text-center">

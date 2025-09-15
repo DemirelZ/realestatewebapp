@@ -38,6 +38,19 @@ export async function getAllTeamMembersFromDb(): Promise<TeamMember[]> {
   return items.filter((m) => m.visible !== false);
 }
 
+// Admin variant: returns all, including hidden
+export async function getAllTeamMembersFromDbAdmin(): Promise<TeamMember[]> {
+  const { db } = getFirebaseClients();
+  const q = query(collection(db, COLLECTION));
+  const snap = await getDocs(q);
+  const items: TeamMember[] = snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<TeamMember, "id">),
+  }));
+  items.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+  return items;
+}
+
 export async function createTeamMember(
   data: CreateTeamMember
 ): Promise<TeamMember> {
