@@ -328,24 +328,22 @@ export default function AdminDashboardPage() {
                           <div className="flex gap-3">
                             <Link
                               href={`/admin/properties/${p.id}/edit`}
-                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                              className="text-blue-600 hover:text-blue-800 transition-colors button"
                             >
-                              ✏️ Düzenle
+                              Düzenle
                             </Link>
                             <Link
                               href={`/ilan/${p.id}`}
-                              className="text-gray-600 hover:text-gray-800 transition-colors"
+                              className="text-gray-600 hover:text-gray-800 transition-colors button"
                             >
-                              👁️ Görüntüle
+                              Görüntüle
                             </Link>
                             <button
                               onClick={() => handleDeleteProperty(p.id)}
                               disabled={deletingId === p.id}
-                              className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed button"
                             >
-                              {deletingId === p.id
-                                ? "⏳ Siliniyor..."
-                                : "🗑️ Sil"}
+                              {deletingId === p.id ? "⏳ Siliniyor..." : "Sil"}
                             </button>
                           </div>
                         </td>

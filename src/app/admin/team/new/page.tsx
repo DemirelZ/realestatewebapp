@@ -181,7 +181,7 @@ export default function NewTeamMemberPage() {
               Ad Soyad
             </label>
             <input
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Örn: Ahmet Neşeli"
@@ -194,7 +194,7 @@ export default function NewTeamMemberPage() {
                 Unvan
               </label>
               <input
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Örn: Satış Müdürü"
@@ -219,7 +219,7 @@ export default function NewTeamMemberPage() {
                 Telefon
               </label>
               <input
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Örn: +90 5xx xxx xx xx"
@@ -231,7 +231,7 @@ export default function NewTeamMemberPage() {
               </label>
               <input
                 type="email"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Örn: ahmet@orneksirket.com"
@@ -243,7 +243,7 @@ export default function NewTeamMemberPage() {
               Açıklama
             </label>
             <textarea
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}

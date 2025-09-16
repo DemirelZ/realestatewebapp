@@ -315,7 +315,7 @@ export default function EditPropertyPage({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="İlan başlığı"
                 required
               />
@@ -329,7 +329,7 @@ export default function EditPropertyPage({
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Şehir, ilçe"
                 required
               />
@@ -343,7 +343,7 @@ export default function EditPropertyPage({
                 type="text"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="1.500.000 TL"
                 required
               />
@@ -381,34 +381,6 @@ export default function EditPropertyPage({
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Oda Sayısı
-              </label>
-              <input
-                type="number"
-                value={bedrooms}
-                onChange={(e) => setBedrooms(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                min="0"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Banyo Sayısı
-              </label>
-              <input
-                type="number"
-                value={bathrooms}
-                onChange={(e) => setBathrooms(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                min="1"
-                required
-              />
-            </div>
-
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -432,6 +404,34 @@ export default function EditPropertyPage({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Oda Sayısı
+                  </label>
+                  <input
+                    type="number"
+                    value={bedrooms}
+                    onChange={(e) => setBedrooms(Number(e.target.value))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Banyo Sayısı
+                  </label>
+                  <input
+                    type="number"
+                    value={bathrooms}
+                    onChange={(e) => setBathrooms(Number(e.target.value))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Brüt Metrekare
                   </label>
                   <input
@@ -442,7 +442,7 @@ export default function EditPropertyPage({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="130"
                   />
                 </div>
@@ -459,7 +459,7 @@ export default function EditPropertyPage({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="110"
                   />
                 </div>
@@ -476,7 +476,7 @@ export default function EditPropertyPage({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="5"
                   />
                 </div>
@@ -493,7 +493,7 @@ export default function EditPropertyPage({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="3"
                   />
                 </div>
@@ -510,7 +510,7 @@ export default function EditPropertyPage({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="10"
                   />
                 </div>
@@ -523,7 +523,7 @@ export default function EditPropertyPage({
                     type="text"
                     value={isitma}
                     onChange={(e) => setIsitma(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Doğalgaz (Kombi)"
                   />
                 </div>
@@ -553,7 +553,7 @@ export default function EditPropertyPage({
                     type="number"
                     value={banyoSayisi}
                     onChange={(e) => setBanyoSayisi(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     min="1"
                   />
                 </div>
@@ -566,7 +566,7 @@ export default function EditPropertyPage({
                     type="text"
                     value={kullanimDurumu}
                     onChange={(e) => setKullanimDurumu(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Boş, Kiracılı, Mal Sahibi"
                   />
                 </div>
@@ -579,7 +579,7 @@ export default function EditPropertyPage({
                     type="text"
                     value={siteAdi}
                     onChange={(e) => setSiteAdi(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Site adı (varsa)"
                   />
                 </div>
@@ -592,23 +592,24 @@ export default function EditPropertyPage({
                     type="text"
                     value={aidat}
                     onChange={(e) => setAidat(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="1.200 TL"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Açıklama
-                  </label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={3}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="İlan açıklaması"
-                  />
-                </div>
+              {/* Açıklama - Tam genişlik */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
+                  Açıklama
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="İlan açıklaması"
+                />
               </div>
 
               {/* Checkbox'lar */}
@@ -692,6 +693,203 @@ export default function EditPropertyPage({
                     Site İçerisinde
                   </label>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Arsa Özellikleri */}
+          {category === "Arsa" && (
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Arsa Özellikleri
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    İmar Durumu
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.imarDurumu || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Konut İmarlı"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Metrekare
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.metrekare || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="500m²"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Metrekare Fiyatı
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.metrekareFiyati || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="8.400 TL/m²"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Ada No
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.adaNo || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="123"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Parsel No
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.parselNo || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="45"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Pafta No
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.paftaNo || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="A-12"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    KAKS/Emsal
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.kaksEmsal || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="0.30"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Gabari
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.gabari || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="6.50 m"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Krediye Uygunluk
+                  </label>
+                  <select
+                    value={property?.landSpecs?.krediyeUygunluk || "Bilinmiyor"}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Bilinmiyor">Bilinmiyor</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Tapu Durumu
+                  </label>
+                  <input
+                    type="text"
+                    value={property?.landSpecs?.tapuDurumu || ""}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Hisseli Değil"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Takas
+                  </label>
+                  <select
+                    value={property?.landSpecs?.takas || "Hayır"}
+                    onChange={(e) => {
+                      // Bu alan için state güncellemesi gerekli
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Hayır">Hayır</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Değerlendirilebilir">
+                      Değerlendirilebilir
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Açıklama - Tam genişlik */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
+                  Açıklama
+                </label>
+                <textarea
+                  value={property?.landSpecs?.description || ""}
+                  onChange={(e) => {
+                    // Bu alan için state güncellemesi gerekli
+                  }}
+                  rows={3}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Arsa açıklaması"
+                />
               </div>
             </div>
           )}
