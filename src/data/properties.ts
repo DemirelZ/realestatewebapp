@@ -1,28 +1,31 @@
 export type LandSpecs = {
-  imarDurumu?: string;
-  metrekare?: string;
+  imarDurumu?: string; // Örn: Tarla, Konut İmarlı, Ticari İmarlı, Arsa İmarlı
+  metrekare?: string; // Örn: 500m²
   metrekareFiyati?: string;
   adaNo?: string;
   parselNo?: string;
   paftaNo?: string;
-  kaksEmsal?: string;
-  gabari?: string;
+  kaksEmsal?: string; // Örn: 0.30
+  gabari?: string; // Örn: 6.50 m
   krediyeUygunluk?: "Evet" | "Hayır" | "Bilinmiyor";
-  tapuDurumu?: string;
+  tapuDurumu?: string; // Örn: Hisseli Tapu, Müstakil Tapu, Kooperatif Hisseli Tapu
   takas?: "Evet" | "Hayır" | "Değerlendirilebilir";
   description?: string;
   url?: string;
 };
 
 export type HousingSpecs = {
+  konutType?: string; // "Daire" | "Residans" | "Villa" | "Müstakil Ev" | "Apartman";
   brutMetrekare?: number; // m² (Brüt)
   netMetrekare?: number; // m² (Net)
+  odaSayisi?: number;
+  salonSayisi?: number;
+  banyoSayisi?: number;
   binaYasi?: number;
   bulunduguKat?: number;
   katSayisi?: number;
   isitma?: string; // Örn: Doğalgaz, Klima, Yerden Isıtma
   mutfak?: "Açık" | "Kapalı" | "Diğer";
-  banyoSayisi?: number;
   otopark?: boolean;
   balkon?: boolean;
   asansor?: boolean;
@@ -30,10 +33,12 @@ export type HousingSpecs = {
   kullanimDurumu?: string; // Boş, Kiracılı, Mal Sahibi
   siteIcerisinde?: boolean;
   siteAdi?: string;
+  tapuDurumu?: string; // Kat Mülkiyetli, Kat İrtifaklı, Hisseli Tapu
+  takas?: "Evet" | "Hayır" | "Değerlendirilebilir";
+  krediyeUygunluk?: "Evet" | "Hayır" | "Bilinmiyor";
   aidat?: string; // Aylık aidat
-  durum?: string; // Boş, Kiracılı, Mal Sahibi
   description?: string;
-  url?: string;
+  url?: string; // sahibinden.com'daki ilanın URL'si
 };
 
 export type ResponsiblePerson = {
@@ -80,13 +85,17 @@ export const allProperties: Property[] = [
     images: [], // Henüz resim yok
     featured: true,
     housingSpecs: {
+      konutType: "Daire",
+      odaSayisi: 3,
+      salonSayisi: 1,
+      banyoSayisi: 2,
       brutMetrekare: 130,
       netMetrekare: 110,
       binaYasi: 5,
       katSayisi: 10,
       isitma: "Doğalgaz (Kombi)",
       mutfak: "Açık",
-      banyoSayisi: 2,
+
       otopark: true,
       balkon: true,
       asansor: true,
@@ -115,6 +124,7 @@ export const allProperties: Property[] = [
     ],
     featured: true,
     housingSpecs: {
+      konutType: "Daire",
       brutMetrekare: 130,
       netMetrekare: 110,
       binaYasi: 5,
@@ -150,6 +160,7 @@ export const allProperties: Property[] = [
     ],
     featured: true,
     housingSpecs: {
+      konutType: "Müstakil Ev",
       brutMetrekare: 380,
       netMetrekare: 330,
       binaYasi: 2,
@@ -184,6 +195,7 @@ export const allProperties: Property[] = [
     ],
     featured: false,
     housingSpecs: {
+      konutType: "Daire",
       brutMetrekare: 95,
       netMetrekare: 80,
       binaYasi: 8,
@@ -227,7 +239,7 @@ export const allProperties: Property[] = [
       kaksEmsal: "0.30",
       gabari: "6.50 m",
       krediyeUygunluk: "Evet",
-      tapuDurumu: "Hisseli Değil",
+      tapuDurumu: "Hisseli Tapu",
       takas: "Değerlendirilebilir",
       description: "Ticari Ofis",
       url: "https://www.google.com",
@@ -248,6 +260,7 @@ export const allProperties: Property[] = [
     ],
     featured: false,
     housingSpecs: {
+      konutType: "Daire",
       brutMetrekare: 210,
       netMetrekare: 190,
       binaYasi: 12,
@@ -283,6 +296,7 @@ export const allProperties: Property[] = [
     ],
     featured: false,
     housingSpecs: {
+      konutType: "Müstakil Ev",
       brutMetrekare: 170,
       netMetrekare: 145,
       binaYasi: 7,
