@@ -12,10 +12,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     property.images.length > 0 &&
     property.images[0].trim() !== ""
       ? property.images[0]
-      : property.mainImage && property.mainImage.trim() !== ""
-      ? property.mainImage
-      : property.image && property.image.trim() !== ""
-      ? property.image
       : "/images/no-images.png";
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
@@ -93,7 +89,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 >
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Oda Sayısı:{property.bedrooms}
+                {(() => {
+                  const oda = property.housingSpecs?.odaSayisi;
+                  const salon = property.housingSpecs?.salonSayisi;
+                  if (typeof oda === "number" && typeof salon === "number")
+                    return `${oda}+${salon}`;
+                  if (typeof oda === "number") return `${oda}+${salon ?? 0}`;
+                  return "-";
+                })()}
               </div>
               <div className="flex items-center">
                 <svg
@@ -107,7 +110,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                     clipRule="evenodd"
                   />
                 </svg>
-                Banyo:{property.bathrooms}
+                Banyo:{property.housingSpecs?.banyoSayisi ?? "-"}
               </div>
               <div className="flex items-center">
                 <svg

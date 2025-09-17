@@ -6,12 +6,8 @@ import Link from "next/link";
 import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getPropertyByIdFromDb, updateProperty } from "@/lib/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { getAllTeamMembersFromDbAdmin, type TeamMember } from "@/lib/team";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Property } from "@/data/properties";
 
 export default function EditPropertyPage({
@@ -28,6 +24,21 @@ export default function EditPropertyPage({
   const [success, setSuccess] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Helpers
+  const formatTrThousands = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (!digits) return "";
+    return Number(digits).toLocaleString("tr-TR");
+  };
+
+  const pruneUndefined = <T extends Record<string, unknown>>(
+    obj: T
+  ): Partial<T> => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([, v]) => v !== undefined)
+    ) as Partial<T>;
+  };
+
   // Form state
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
@@ -40,11 +51,13 @@ export default function EditPropertyPage({
   const [description, setDescription] = useState("");
 
   // Housing specs
+  const [konutType, setKonutType] = useState("");
   const [brutMetrekare, setBrutMetrekare] = useState<number | undefined>();
   const [netMetrekare, setNetMetrekare] = useState<number | undefined>();
   const [binaYasi, setBinaYasi] = useState<number | undefined>();
   const [bulunduguKat, setBulunduguKat] = useState<number | undefined>();
   const [katSayisi, setKatSayisi] = useState<number | undefined>();
+  const [salonSayisi, setSalonSayisi] = useState<number | undefined>();
   const [isitma, setIsitma] = useState("");
   const [mutfak, setMutfak] = useState<"Açık" | "Kapalı" | "Diğer">("Açık");
   const [banyoSayisi, setBanyoSayisi] = useState(1);
@@ -56,11 +69,39 @@ export default function EditPropertyPage({
   const [siteIcerisinde, setSiteIcerisinde] = useState(false);
   const [siteAdi, setSiteAdi] = useState("");
   const [aidat, setAidat] = useState("");
+  // Responsible person (team)
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [selectedResponsibleId, setSelectedResponsibleId] =
+    useState<string>("");
+  const [tapuDurumuHousing, setTapuDurumuHousing] = useState("");
+  const [takasHousing, setTakasHousing] = useState<
+    "Evet" | "Hayır" | "Değerlendirilebilir"
+  >("Hayır");
+  const [krediyeUygunlukHousing, setKrediyeUygunlukHousing] = useState<
+    "Evet" | "Hayır" | "Bilinmiyor"
+  >("Bilinmiyor");
+  const [housingUrl, setHousingUrl] = useState("");
+
+  // Land specs (controlled for edit)
+  const [imarDurumu, setImarDurumu] = useState("");
+  const [metrekare, setMetrekare] = useState("");
+  const [metrekareFiyati, setMetrekareFiyati] = useState("");
+  const [adaNo, setAdaNo] = useState("");
+  const [parselNo, setParselNo] = useState("");
+  const [paftaNo, setPaftaNo] = useState("");
+  const [kaksEmsal, setKaksEmsal] = useState("");
+  const [gabari, setGabari] = useState("");
+  const [krediyeUygunluk, setKrediyeUygunluk] = useState<
+    "Evet" | "Hayır" | "Bilinmiyor"
+  >("Bilinmiyor");
+  const [tapuDurumu, setTapuDurumu] = useState("");
+  const [takas, setTakas] = useState<"Evet" | "Hayır" | "Değerlendirilebilir">(
+    "Hayır"
+  );
+  const [landUrl, setLandUrl] = useState("");
 
   // Images
-  const [mainImage, setMainImage] = useState("");
   const [images, setImages] = useState<string[]>([]);
-  const [newImages, setNewImages] = useState<File[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
 
   useEffect(() => {
@@ -96,16 +137,22 @@ export default function EditPropertyPage({
         setPrice(propertyData.price);
         setType(propertyData.type);
         setCategory(propertyData.category || "Konut");
-        setBedrooms(propertyData.bedrooms);
-        setBathrooms(propertyData.bathrooms);
+        setBedrooms(propertyData.housingSpecs?.odaSayisi || 1);
+        setBathrooms(propertyData.housingSpecs?.banyoSayisi || 1);
         setFeatured(propertyData.featured);
-        setMainImage(propertyData.mainImage || "");
         setImages(propertyData.images || []);
+
+        // Responsible person
+        if (propertyData.responsiblePerson) {
+          // doesn't have id, we match by name later in UI as fallback
+        }
 
         // Housing specs
         if (propertyData.housingSpecs) {
+          setKonutType(propertyData.housingSpecs.konutType || "");
           setBrutMetrekare(propertyData.housingSpecs.brutMetrekare);
           setNetMetrekare(propertyData.housingSpecs.netMetrekare);
+          setSalonSayisi(propertyData.housingSpecs.salonSayisi);
           setBinaYasi(propertyData.housingSpecs.binaYasi);
           setBulunduguKat(propertyData.housingSpecs.bulunduguKat);
           setKatSayisi(propertyData.housingSpecs.katSayisi);
@@ -121,12 +168,36 @@ export default function EditPropertyPage({
           setSiteAdi(propertyData.housingSpecs.siteAdi || "");
           setAidat(propertyData.housingSpecs.aidat || "");
           setDescription(propertyData.housingSpecs.description || "");
+          setTapuDurumuHousing(propertyData.housingSpecs.tapuDurumu || "");
+          setTakasHousing(propertyData.housingSpecs.takas || "Hayır");
+          setKrediyeUygunlukHousing(
+            propertyData.housingSpecs.krediyeUygunluk || "Bilinmiyor"
+          );
+          setHousingUrl(propertyData.housingSpecs.url || "");
+        }
+
+        if (propertyData.landSpecs) {
+          setImarDurumu(propertyData.landSpecs.imarDurumu || "");
+          setMetrekare(propertyData.landSpecs.metrekare || "");
+          setMetrekareFiyati(propertyData.landSpecs.metrekareFiyati || "");
+          setAdaNo(propertyData.landSpecs.adaNo || "");
+          setParselNo(propertyData.landSpecs.parselNo || "");
+          setPaftaNo(propertyData.landSpecs.paftaNo || "");
+          setKaksEmsal(propertyData.landSpecs.kaksEmsal || "");
+          setGabari(propertyData.landSpecs.gabari || "");
+          setKrediyeUygunluk(
+            propertyData.landSpecs.krediyeUygunluk || "Bilinmiyor"
+          );
+          setTapuDurumu(propertyData.landSpecs.tapuDurumu || "");
+          setTakas(propertyData.landSpecs.takas || "Hayır");
+          setLandUrl(propertyData.landSpecs.url || "");
         }
 
         setLoading(false);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(
-          "İlan yüklenirken hata: " + (err?.message ?? "Bilinmeyen hata")
+          "İlan yüklenirken hata: " +
+            (err instanceof Error ? err.message : "Bilinmeyen hata")
         );
         setLoading(false);
       }
@@ -134,6 +205,17 @@ export default function EditPropertyPage({
 
     return () => unsub();
   }, [auth, params]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await getAllTeamMembersFromDbAdmin();
+        setTeamMembers(list);
+      } catch (e) {
+        // ignore
+      }
+    })();
+  }, []);
 
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -158,12 +240,12 @@ export default function EditPropertyPage({
         uploadedUrls.push(url);
       }
 
-      setImages((prev) => [...prev, ...uploadedUrls]);
-      setNewImages((prev) => [...prev, ...fileArray]);
+      setImages((prev: string[]) => [...prev, ...uploadedUrls]);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        "Resim yüklenirken hata: " + (err?.message ?? "Bilinmeyen hata")
+        "Resim yüklenirken hata: " +
+          (err instanceof Error ? err.message : "Bilinmeyen hata")
       );
     } finally {
       setUploadingImages(false);
@@ -172,11 +254,16 @@ export default function EditPropertyPage({
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
-    setNewImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const setAsMainImage = (index: number) => {
-    setMainImage(images[index]);
+    setImages((prev) => {
+      if (!prev || index < 0 || index >= prev.length) return prev;
+      const newOrder = [...prev];
+      const [selected] = newOrder.splice(index, 1);
+      newOrder.unshift(selected);
+      return newOrder;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,37 +272,77 @@ export default function EditPropertyPage({
 
     setSaving(true);
     try {
+      const housing = pruneUndefined({
+        konutType,
+        odaSayisi: bedrooms,
+        salonSayisi,
+        banyoSayisi: bathrooms,
+        brutMetrekare,
+        netMetrekare,
+        binaYasi,
+        bulunduguKat,
+        katSayisi,
+        isitma,
+        mutfak,
+        otopark,
+        balkon,
+        asansor,
+        esyali,
+        kullanimDurumu,
+        siteIcerisinde,
+        siteAdi,
+        aidat,
+        description,
+        tapuDurumu: tapuDurumuHousing,
+        takas: takasHousing,
+        krediyeUygunluk: krediyeUygunlukHousing,
+        url: housingUrl,
+      });
+
+      const land = pruneUndefined({
+        imarDurumu,
+        metrekare,
+        metrekareFiyati,
+        adaNo,
+        parselNo,
+        paftaNo,
+        kaksEmsal,
+        gabari,
+        krediyeUygunluk,
+        tapuDurumu,
+        takas,
+        description,
+        url: landUrl,
+      });
+
       const updateData: Partial<Property> = {
         title,
         location,
         price,
         type,
         category,
-        bedrooms,
-        bathrooms,
         featured,
-        mainImage,
         images,
-        housingSpecs: {
-          brutMetrekare,
-          netMetrekare,
-          binaYasi,
-          bulunduguKat,
-          katSayisi,
-          isitma,
-          mutfak,
-          banyoSayisi,
-          otopark,
-          balkon,
-          asansor,
-          esyali,
-          kullanimDurumu,
-          siteIcerisinde,
-          siteAdi,
-          aidat,
-          description,
-        },
+        housingSpecs: housing,
+        ...(category === "Arsa" ? { landSpecs: land } : {}),
       };
+
+      if (selectedResponsibleId) {
+        const person = teamMembers.find((m) => m.id === selectedResponsibleId);
+        if (person) {
+          updateData.responsiblePerson = Object.fromEntries(
+            Object.entries({
+              name: person.name,
+              title: person.title,
+              phone: person.phone ?? "",
+              email: person.email,
+              description: person.description,
+              image: person.image,
+              url: person.url,
+            }).filter(([, v]) => v !== undefined)
+          ) as unknown as typeof updateData.responsiblePerson;
+        }
+      }
 
       await updateProperty(property.id, updateData);
       setSuccess("İlan başarıyla güncellendi!");
@@ -224,9 +351,10 @@ export default function EditPropertyPage({
       setTimeout(() => {
         router.push("/admin/dashboard");
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        "İlan güncellenirken hata: " + (err?.message ?? "Bilinmeyen hata")
+        "İlan güncellenirken hata: " +
+          (err instanceof Error ? err.message : "Bilinmeyen hata")
       );
     } finally {
       setSaving(false);
@@ -269,7 +397,7 @@ export default function EditPropertyPage({
             href="/admin/dashboard"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Dashboard'a Dön
+            Dashboard&apos;a Dön
           </Link>
         </div>
       </main>
@@ -285,7 +413,7 @@ export default function EditPropertyPage({
             href="/admin/dashboard"
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors"
           >
-            Dashboard'a Dön
+            Dashboard&apos;a Dön
           </Link>
         </div>
 
@@ -323,6 +451,24 @@ export default function EditPropertyPage({
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">
+                Sorumlu Kişi
+              </label>
+              <select
+                value={selectedResponsibleId}
+                onChange={(e) => setSelectedResponsibleId(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Seçiniz</option>
+                {teamMembers.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">
                 Konum
               </label>
               <input
@@ -342,7 +488,8 @@ export default function EditPropertyPage({
               <input
                 type="text"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(formatTrThousands(e.target.value))}
+                inputMode="numeric"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="1.500.000 TL"
                 required
@@ -545,18 +692,7 @@ export default function EditPropertyPage({
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Banyo Sayısı
-                  </label>
-                  <input
-                    type="number"
-                    value={banyoSayisi}
-                    onChange={(e) => setBanyoSayisi(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    min="1"
-                  />
-                </div>
+                {/* Duplicate removed: Banyo Sayısı handled above with `bathrooms` */}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
@@ -594,6 +730,75 @@ export default function EditPropertyPage({
                     onChange={(e) => setAidat(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="1.200 TL"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Tapu Durumu
+                  </label>
+                  <input
+                    type="text"
+                    value={tapuDurumuHousing}
+                    onChange={(e) => setTapuDurumuHousing(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Kat Mülkiyetli, Kat İrtifaklı..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Krediye Uygunluk
+                  </label>
+                  <select
+                    value={krediyeUygunlukHousing}
+                    onChange={(e) =>
+                      setKrediyeUygunlukHousing(
+                        e.target.value as "Evet" | "Hayır" | "Bilinmiyor"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Bilinmiyor">Bilinmiyor</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Takas
+                  </label>
+                  <select
+                    value={takasHousing}
+                    onChange={(e) =>
+                      setTakasHousing(
+                        e.target.value as
+                          | "Evet"
+                          | "Hayır"
+                          | "Değerlendirilebilir"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Hayır">Hayır</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Değerlendirilebilir">
+                      Değerlendirilebilir
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    İlan URL
+                  </label>
+                  <input
+                    type="url"
+                    value={housingUrl}
+                    onChange={(e) => setHousingUrl(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://..."
                   />
                 </div>
               </div>
@@ -710,10 +915,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.imarDurumu || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={imarDurumu}
+                    onChange={(e) => setImarDurumu(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Konut İmarlı"
                   />
@@ -725,10 +928,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.metrekare || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={metrekare}
+                    onChange={(e) => setMetrekare(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="500m²"
                   />
@@ -740,10 +941,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.metrekareFiyati || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={metrekareFiyati}
+                    onChange={(e) => setMetrekareFiyati(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="8.400 TL/m²"
                   />
@@ -755,10 +954,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.adaNo || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={adaNo}
+                    onChange={(e) => setAdaNo(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="123"
                   />
@@ -770,10 +967,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.parselNo || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={parselNo}
+                    onChange={(e) => setParselNo(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="45"
                   />
@@ -785,10 +980,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.paftaNo || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={paftaNo}
+                    onChange={(e) => setPaftaNo(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="A-12"
                   />
@@ -800,10 +993,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.kaksEmsal || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={kaksEmsal}
+                    onChange={(e) => setKaksEmsal(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="0.30"
                   />
@@ -815,10 +1006,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.gabari || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={gabari}
+                    onChange={(e) => setGabari(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="6.50 m"
                   />
@@ -829,10 +1018,12 @@ export default function EditPropertyPage({
                     Krediye Uygunluk
                   </label>
                   <select
-                    value={property?.landSpecs?.krediyeUygunluk || "Bilinmiyor"}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={krediyeUygunluk}
+                    onChange={(e) =>
+                      setKrediyeUygunluk(
+                        e.target.value as "Evet" | "Hayır" | "Bilinmiyor"
+                      )
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="Bilinmiyor">Bilinmiyor</option>
@@ -847,10 +1038,8 @@ export default function EditPropertyPage({
                   </label>
                   <input
                     type="text"
-                    value={property?.landSpecs?.tapuDurumu || ""}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={tapuDurumu}
+                    onChange={(e) => setTapuDurumu(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Hisseli Değil"
                   />
@@ -861,10 +1050,15 @@ export default function EditPropertyPage({
                     Takas
                   </label>
                   <select
-                    value={property?.landSpecs?.takas || "Hayır"}
-                    onChange={(e) => {
-                      // Bu alan için state güncellemesi gerekli
-                    }}
+                    value={takas}
+                    onChange={(e) =>
+                      setTakas(
+                        e.target.value as
+                          | "Evet"
+                          | "Hayır"
+                          | "Değerlendirilebilir"
+                      )
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="Hayır">Hayır</option>
@@ -882,13 +1076,24 @@ export default function EditPropertyPage({
                   Açıklama
                 </label>
                 <textarea
-                  value={property?.landSpecs?.description || ""}
-                  onChange={(e) => {
-                    // Bu alan için state güncellemesi gerekli
-                  }}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Arsa açıklaması"
+                />
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
+                  İlan URL
+                </label>
+                <input
+                  type="url"
+                  value={landUrl}
+                  onChange={(e) => setLandUrl(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="https://..."
                 />
               </div>
             </div>
@@ -920,12 +1125,12 @@ export default function EditPropertyPage({
                             type="button"
                             onClick={() => setAsMainImage(index)}
                             className={`px-2 py-1 text-xs rounded ${
-                              image === mainImage
+                              index === 0
                                 ? "bg-green-600 text-white"
                                 : "bg-blue-600 text-white hover:bg-blue-700"
                             }`}
                           >
-                            {image === mainImage ? "Ana Resim" : "Ana Yap"}
+                            {index === 0 ? "Ana Resim" : "Ana Yap"}
                           </button>
                           <button
                             type="button"
@@ -973,7 +1178,7 @@ export default function EditPropertyPage({
                       type="button"
                       onClick={() => setAsMainImage(index)}
                       className={`p-2 rounded-lg border-2 transition-colors ${
-                        image === mainImage
+                        index === 0
                           ? "border-green-500 bg-green-50"
                           : "border-gray-200 hover:border-gray-300"
                       }`}

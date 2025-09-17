@@ -1,21 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { allProperties } from "@/data/properties";
+import { useEffect, useState } from "react";
 import ListingCard from "@/components/ListingCard";
+import type { Property } from "@/data/properties";
 import Link from "next/link";
 
 export default function SatilikPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [selectedRoomType, setSelectedRoomType] = useState("");
+  const [items, setItems] = useState<Property[]>([]);
 
-  const satiliklar = allProperties.filter((p) => p.type === "Satılık");
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/properties");
+      const json = (await res.json()) as { data: Property[] };
+      setItems(json.data || []);
+    })();
+  }, []);
+
+  const satiliklar = items.filter((p) => p.type === "Satılık");
 
   const filteredEmlaklar = satiliklar.filter((emlak) => {
     if (selectedLocation && !emlak.location.includes(selectedLocation))
       return false;
-    if (selectedRoomType && !String(emlak.bedrooms).includes(selectedRoomType))
+    if (
+      selectedRoomType &&
+      !String(emlak.housingSpecs?.odaSayisi ?? "").includes(selectedRoomType)
+    )
       return false;
     // Fiyat aralığı basit örnek (string fiyatlardan sayıya çevirmeden simge olarak kontrol edilmiyor)
     return true;

@@ -7,7 +7,8 @@ import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { createProperty } from "@/lib/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import type { Property } from "@/data/properties";
+// no direct Property usage here
+import { getAllTeamMembersFromDbAdmin, type TeamMember } from "@/lib/team";
 
 export default function NewPropertyPage() {
   const { auth, storage } = getFirebaseClients();
@@ -15,6 +16,21 @@ export default function NewPropertyPage() {
   const [allowed, setAllowed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Helpers
+  const formatTrThousands = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (!digits) return "";
+    return Number(digits).toLocaleString("tr-TR");
+  };
+
+  const pruneUndefined = <T extends Record<string, unknown>>(
+    obj: T
+  ): Partial<T> => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([, v]) => v !== undefined)
+    ) as Partial<T>;
+  };
 
   // Form state
   const [title, setTitle] = useState("");
@@ -28,14 +44,15 @@ export default function NewPropertyPage() {
   const [description, setDescription] = useState("");
 
   // Housing specs
+  const [konutType, setKonutType] = useState("");
   const [brutMetrekare, setBrutMetrekare] = useState<number | undefined>();
   const [netMetrekare, setNetMetrekare] = useState<number | undefined>();
   const [binaYasi, setBinaYasi] = useState<number | undefined>();
   const [bulunduguKat, setBulunduguKat] = useState<number | undefined>();
   const [katSayisi, setKatSayisi] = useState<number | undefined>();
+  const [salonSayisi, setSalonSayisi] = useState<number | undefined>();
   const [isitma, setIsitma] = useState("");
   const [mutfak, setMutfak] = useState<"Açık" | "Kapalı" | "Diğer">("Açık");
-  const [banyoSayisi, setBanyoSayisi] = useState(1);
   const [otopark, setOtopark] = useState(false);
   const [balkon, setBalkon] = useState(false);
   const [asansor, setAsansor] = useState(false);
@@ -44,6 +61,19 @@ export default function NewPropertyPage() {
   const [siteIcerisinde, setSiteIcerisinde] = useState(false);
   const [siteAdi, setSiteAdi] = useState("");
   const [aidat, setAidat] = useState("");
+  const [tapuDurumuHousing, setTapuDurumuHousing] = useState("");
+  const [takasHousing, setTakasHousing] = useState<
+    "Evet" | "Hayır" | "Değerlendirilebilir"
+  >("Hayır");
+  const [krediyeUygunlukHousing, setKrediyeUygunlukHousing] = useState<
+    "Evet" | "Hayır" | "Bilinmiyor"
+  >("Bilinmiyor");
+  const [housingUrl, setHousingUrl] = useState("");
+
+  // Responsible person (team)
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [selectedResponsibleId, setSelectedResponsibleId] =
+    useState<string>("");
 
   // Land specs (for Arsa category)
   const [imarDurumu, setImarDurumu] = useState("");
@@ -61,9 +91,9 @@ export default function NewPropertyPage() {
   const [takas, setTakas] = useState<"Evet" | "Hayır" | "Değerlendirilebilir">(
     "Hayır"
   );
+  const [landUrl, setLandUrl] = useState("");
 
   // Images
-  const [mainImage, setMainImage] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
 
@@ -73,6 +103,17 @@ export default function NewPropertyPage() {
     });
     return () => unsub();
   }, [auth]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await getAllTeamMembersFromDbAdmin();
+        setTeamMembers(list);
+      } catch (e) {
+        // ignore
+      }
+    })();
+  }, []);
 
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -114,7 +155,13 @@ export default function NewPropertyPage() {
   };
 
   const setAsMainImage = (index: number) => {
-    setMainImage(images[index]);
+    setImages((prev) => {
+      if (!prev || index < 0 || index >= prev.length) return prev;
+      const newOrder = [...prev];
+      const [selected] = newOrder.splice(index, 1);
+      newOrder.unshift(selected);
+      return newOrder;
+    });
   };
 
   async function handleSubmit(e: React.FormEvent) {
@@ -124,24 +171,39 @@ export default function NewPropertyPage() {
     setError(null);
     try {
       const allImages = [...images];
-      const mainImageUrl = allImages.length > 0 ? allImages[0] : "";
 
-      const propertyData: any = {
+      const propertyData: Parameters<typeof createProperty>[0] = {
         title,
         location,
         price,
         type,
         category,
-        bedrooms,
-        bathrooms,
         images: allImages,
-        mainImage: mainImageUrl,
         featured,
       };
 
-      // Konut özellikleri
+      if (selectedResponsibleId) {
+        const person = teamMembers.find((m) => m.id === selectedResponsibleId);
+        if (person) {
+          propertyData.responsiblePerson = pruneUndefined({
+            name: person.name,
+            title: person.title,
+            phone: person.phone ?? "",
+            email: person.email,
+            description: person.description,
+            image: person.image,
+            url: person.url,
+          }) as any;
+        }
+      }
+
+      // Konut özellikleri (undefined alanları gönderme)
       if (category === "Konut") {
-        propertyData.housingSpecs = {
+        propertyData.housingSpecs = pruneUndefined({
+          konutType,
+          odaSayisi: bedrooms,
+          salonSayisi,
+          banyoSayisi: bathrooms,
           brutMetrekare,
           netMetrekare,
           binaYasi,
@@ -149,7 +211,6 @@ export default function NewPropertyPage() {
           katSayisi,
           isitma,
           mutfak,
-          banyoSayisi,
           otopark,
           balkon,
           asansor,
@@ -159,12 +220,16 @@ export default function NewPropertyPage() {
           siteAdi,
           aidat,
           description,
-        };
+          tapuDurumu: tapuDurumuHousing,
+          takas: takasHousing,
+          krediyeUygunluk: krediyeUygunlukHousing,
+          url: housingUrl,
+        }) as any;
       }
 
-      // Arsa özellikleri
+      // Arsa özellikleri (undefined alanları gönderme)
       if (category === "Arsa") {
-        propertyData.landSpecs = {
+        propertyData.landSpecs = pruneUndefined({
           imarDurumu,
           metrekare,
           metrekareFiyati,
@@ -177,7 +242,8 @@ export default function NewPropertyPage() {
           tapuDurumu,
           takas,
           description,
-        };
+          url: landUrl,
+        }) as any;
       }
 
       await createProperty(propertyData);
@@ -241,6 +307,24 @@ export default function NewPropertyPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">
+                Sorumlu Kişi
+              </label>
+              <select
+                value={selectedResponsibleId}
+                onChange={(e) => setSelectedResponsibleId(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Seçiniz</option>
+                {teamMembers.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">
                 Konum
               </label>
               <input
@@ -260,7 +344,8 @@ export default function NewPropertyPage() {
               <input
                 type="text"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(formatTrThousands(e.target.value))}
+                inputMode="numeric"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="1.500.000 TL"
                 required
@@ -322,6 +407,18 @@ export default function NewPropertyPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Konut Tipi
+                  </label>
+                  <input
+                    type="text"
+                    value={konutType}
+                    onChange={(e) => setKonutType(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Daire, Villa, Müstakil Ev..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Oda Sayısı
                   </label>
                   <input
@@ -331,6 +428,23 @@ export default function NewPropertyPage() {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     min="0"
                     required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Salon Sayısı
+                  </label>
+                  <input
+                    type="number"
+                    value={salonSayisi || ""}
+                    onChange={(e) =>
+                      setSalonSayisi(
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="0"
                   />
                 </div>
 
@@ -463,18 +577,7 @@ export default function NewPropertyPage() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Banyo Sayısı
-                  </label>
-                  <input
-                    type="number"
-                    value={banyoSayisi}
-                    onChange={(e) => setBanyoSayisi(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    min="1"
-                  />
-                </div>
+                {/* Duplicate removed: Banyo Sayısı handled above with `bathrooms` */}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
@@ -512,6 +615,75 @@ export default function NewPropertyPage() {
                     onChange={(e) => setAidat(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="1.200 TL"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Tapu Durumu
+                  </label>
+                  <input
+                    type="text"
+                    value={tapuDurumuHousing}
+                    onChange={(e) => setTapuDurumuHousing(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Kat Mülkiyetli, Kat İrtifaklı..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Krediye Uygunluk
+                  </label>
+                  <select
+                    value={krediyeUygunlukHousing}
+                    onChange={(e) =>
+                      setKrediyeUygunlukHousing(
+                        e.target.value as "Evet" | "Hayır" | "Bilinmiyor"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Bilinmiyor">Bilinmiyor</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Takas
+                  </label>
+                  <select
+                    value={takasHousing}
+                    onChange={(e) =>
+                      setTakasHousing(
+                        e.target.value as
+                          | "Evet"
+                          | "Hayır"
+                          | "Değerlendirilebilir"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Hayır">Hayır</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Değerlendirilebilir">
+                      Değerlendirilebilir
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    İlan URL
+                  </label>
+                  <input
+                    type="url"
+                    value={housingUrl}
+                    onChange={(e) => setHousingUrl(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://..."
                   />
                 </div>
               </div>
@@ -825,12 +997,12 @@ export default function NewPropertyPage() {
                             type="button"
                             onClick={() => setAsMainImage(index)}
                             className={`px-2 py-1 text-xs rounded ${
-                              image === mainImage
+                              index === 0
                                 ? "bg-green-600 text-white"
                                 : "bg-blue-600 text-white hover:bg-blue-700"
                             }`}
                           >
-                            {image === mainImage ? "Ana Resim" : "Ana Yap"}
+                            {index === 0 ? "Ana Resim" : "Ana Yap"}
                           </button>
                           <button
                             type="button"
@@ -878,7 +1050,7 @@ export default function NewPropertyPage() {
                       type="button"
                       onClick={() => setAsMainImage(index)}
                       className={`p-2 rounded-lg border-2 transition-colors ${
-                        image === mainImage
+                        index === 0
                           ? "border-green-500 bg-green-50"
                           : "border-gray-200 hover:border-gray-300"
                       }`}

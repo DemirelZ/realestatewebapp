@@ -12,10 +12,6 @@ export default function ListingCard({ property }: ListingCardProps) {
     property.images.length > 0 &&
     property.images[0].trim() !== ""
       ? property.images[0]
-      : property.mainImage && property.mainImage.trim() !== ""
-      ? property.mainImage
-      : property.image && property.image.trim() !== ""
-      ? property.image
       : "/images/no-images.png";
   const isRental = property.type === "Kiralık";
   const badgeColor = isRental ? "bg-green-600" : "bg-blue-600";
@@ -23,6 +19,15 @@ export default function ListingCard({ property }: ListingCardProps) {
 
   const areaValue =
     property.housingSpecs?.netMetrekare ?? property.housingSpecs?.brutMetrekare;
+
+  const odaSalonText = (() => {
+    const oda = property.housingSpecs?.odaSayisi;
+    const salon = property.housingSpecs?.salonSayisi;
+    if (typeof oda === "number" && typeof salon === "number")
+      return `${oda}+${salon}`;
+    if (typeof oda === "number") return `${oda}+${salon ?? 0}`;
+    return "-";
+  })();
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
@@ -85,19 +90,11 @@ export default function ListingCard({ property }: ListingCardProps) {
                 isRental ? "text-teal-600" : "text-green-600"
               }`}
             >
-              {property.bedrooms}
+              {odaSalonText}
             </div>
             <div className="text-sm text-gray-600">Oda</div>
           </div>
         </div>
-
-        {property.housingSpecs?.description ||
-        property.landSpecs?.description ? (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-            {property.housingSpecs?.description ??
-              property.landSpecs?.description}
-          </p>
-        ) : null}
 
         <div className="flex justify-between items-center">
           <Link

@@ -15,6 +15,7 @@ import {
 import {
   getAllAnnouncementsFromDbAdmin,
   deleteAnnouncement,
+  updateAnnouncement,
   type Announcement,
 } from "@/lib/announcements";
 
@@ -28,6 +29,7 @@ export default function AdminDashboardPage() {
     title: string;
     type: string;
     price: string;
+    category?: "Konut" | "Arsa";
   };
   const [items, setItems] = useState<DashboardProperty[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -143,6 +145,18 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleToggleAnnouncementVisible = async (a: Announcement) => {
+    try {
+      const newVisible = !(a.visible === false ? false : true);
+      await updateAnnouncement(a.id, { visible: newVisible });
+      setAnn((prev) =>
+        prev.map((x) => (x.id === a.id ? { ...x, visible: newVisible } : x))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -188,7 +202,7 @@ export default function AdminDashboardPage() {
             </button>
           </div>
           <div className="mt-4 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               <Link
                 href="/admin/properties/new"
                 className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded-lg transition-colors"
@@ -271,6 +285,9 @@ export default function AdminDashboardPage() {
                       Tür
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Kategori
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Fiyat
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -320,6 +337,9 @@ export default function AdminDashboardPage() {
                           >
                             {p.type}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {p.category ?? "-"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {p.price}
@@ -372,12 +392,6 @@ export default function AdminDashboardPage() {
                       Ad
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Unvan
-                    </th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sıra
-                    </th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Durum
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -388,7 +402,7 @@ export default function AdminDashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {team.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center">
+                      <td colSpan={3} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
                           <span className="text-4xl">👥</span>
                           <p className="text-gray-500 text-lg">
@@ -413,12 +427,6 @@ export default function AdminDashboardPage() {
                       >
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {m.name}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {m.title ?? <span className="text-gray-400">-</span>}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {m.order ?? <span className="text-gray-400">-</span>}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
@@ -472,6 +480,9 @@ export default function AdminDashboardPage() {
                       Başlık
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      İçerik
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Durum
                     </th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -482,7 +493,7 @@ export default function AdminDashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {ann.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="px-6 py-12 text-center">
+                      <td colSpan={4} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
                           <span className="text-4xl">📣</span>
                           <p className="text-gray-500 text-lg">
@@ -508,6 +519,9 @@ export default function AdminDashboardPage() {
                         <td className="px-6 py-4 text-sm font-medium text-gray-900 max-w-xs truncate">
                           {a.title}
                         </td>
+                        <td className="px-6 py-4 text-sm text-gray-700 max-w-md truncate">
+                          {a.content ?? "-"}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -521,6 +535,12 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex gap-3">
+                            <button
+                              onClick={() => handleToggleAnnouncementVisible(a)}
+                              className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                            >
+                              {a.visible === false ? " Yayınla" : "🔒 Gizle"}
+                            </button>
                             <Link
                               href={`/admin/announcements/${a.id}/edit`}
                               className="text-blue-600 hover:text-blue-800 transition-colors"

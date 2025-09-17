@@ -1,11 +1,12 @@
-import { allProperties } from "@/data/properties";
+import { getAllPropertiesFromDb } from "@/lib/firestore";
 import PropertyCard from "@/components/PropertyCard";
 
 export const metadata = {
   title: "İlanlar",
 };
 
-export default function IlanlarPage() {
+export default async function IlanlarPage() {
+  const allProperties = await getAllPropertiesFromDb();
   return (
     <main className="py-16 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { allProperties } from "@/data/properties";
+import { getAllPropertiesFromDb } from "@/lib/firestore";
 import PropertyCard from "@/components/PropertyCard";
 
-export default function FeaturedProperties() {
+export default async function FeaturedProperties() {
+  const allProperties = await getAllPropertiesFromDb();
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

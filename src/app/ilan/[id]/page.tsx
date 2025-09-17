@@ -1,11 +1,9 @@
-import { allProperties } from "@/data/properties";
+import { getPropertyByIdFromDb } from "@/lib/firestore";
 import ImageCarousel from "@/components/ImageCarousel";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export function generateStaticParams() {
-  return allProperties.map((p) => ({ id: String(p.id) }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function IlanDetay({
   params,
@@ -14,22 +12,18 @@ export default async function IlanDetay({
 }) {
   const { id } = await params;
   const num = Number(id);
-  const property = allProperties.find((p) => p.id === num);
-
-  if (!Number.isFinite(num) || !property) {
+  if (!Number.isFinite(num)) {
+    notFound();
+  }
+  const property = await getPropertyByIdFromDb(num);
+  if (!property) {
     notFound();
   }
 
   const images =
     property.images && property.images.length > 0
       ? property.images
-      : [
-          property.mainImage && property.mainImage.trim() !== ""
-            ? property.mainImage
-            : property.image && property.image.trim() !== ""
-            ? property.image
-            : "/images/no-images.png",
-        ];
+      : ["/images/no-images.png"];
 
   return (
     <main className="py-12 bg-gray-50 min-h-screen">
@@ -102,9 +96,17 @@ export default async function IlanDetay({
               </div>
             ) : (
               <div className="space-y-2">
+                <DetailRow
+                  label="Konut Tipi"
+                  value={property.housingSpecs?.konutType}
+                />
+                <DetailRow
+                  label="Salon Sayısı"
+                  value={property.housingSpecs?.salonSayisi?.toString()}
+                />
                 <div className="grid grid-cols-3 gap-2 text-sm text-gray-700">
-                  <div>Oda: {property.bedrooms}</div>
-                  <div>Banyo: {property.bathrooms}</div>
+                  <div>Oda: {property.housingSpecs?.odaSayisi ?? "-"}</div>
+                  <div>Banyo: {property.housingSpecs?.banyoSayisi ?? "-"}</div>
                   <div>
                     Alan:{" "}
                     {property.housingSpecs?.netMetrekare ??
@@ -130,6 +132,10 @@ export default async function IlanDetay({
                 <DetailRow
                   label="Kat Sayısı"
                   value={property.housingSpecs?.katSayisi?.toString()}
+                />
+                <DetailRow
+                  label="Bulunduğu Kat"
+                  value={property.housingSpecs?.bulunduguKat?.toString()}
                 />
                 <DetailRow
                   label="Isıtma"
@@ -181,6 +187,28 @@ export default async function IlanDetay({
                     value={property.housingSpecs.aidat}
                   />
                 )}
+                <DetailRow
+                  label="Tapu Durumu"
+                  value={property.housingSpecs?.tapuDurumu}
+                />
+                <DetailRow
+                  label="Krediye Uygunluk"
+                  value={property.housingSpecs?.krediyeUygunluk}
+                />
+                <DetailRow label="Takas" value={property.housingSpecs?.takas} />
+
+                {(property.housingSpecs?.description ||
+                  property.landSpecs?.description) && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                      Açıklama
+                    </h2>
+                    <p className="text-gray-700 whitespace-pre-line">
+                      {property.housingSpecs?.description ??
+                        property.landSpecs?.description}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -221,6 +249,63 @@ export default async function IlanDetay({
                 )}
               </div>
             </div>
+
+            {property.responsiblePerson && (
+              <div className="mt-8 border-t pt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Emlak Danışmanı
+                </h2>
+                <div className="rounded-lg border border-gray-200 p-4 bg-gray-50">
+                  <div className="flex flex-col gap-1 text-sm">
+                    <div className="text-gray-900 font-medium">
+                      {property.responsiblePerson.name}
+                    </div>
+                    {property.responsiblePerson.title && (
+                      <div className="text-gray-600">
+                        {property.responsiblePerson.title}
+                      </div>
+                    )}
+                    {property.responsiblePerson.phone && (
+                      <div>
+                        <a
+                          href={`tel:${property.responsiblePerson.phone}`}
+                          className="text-blue-600 font-bold hover:text-blue-700"
+                        >
+                          {property.responsiblePerson.phone}
+                        </a>
+                      </div>
+                    )}
+                    {property.responsiblePerson.email && (
+                      <div>
+                        <a
+                          href={`mailto:${property.responsiblePerson.email}`}
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          {property.responsiblePerson.email}
+                        </a>
+                      </div>
+                    )}
+                    {property.responsiblePerson.url && (
+                      <div>
+                        <a
+                          href={property.responsiblePerson.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          bağlantı
+                        </a>
+                      </div>
+                    )}
+                    {property.responsiblePerson.description && (
+                      <div className="text-gray-700 mt-2 whitespace-pre-line">
+                        {property.responsiblePerson.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
