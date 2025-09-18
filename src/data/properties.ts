@@ -15,7 +15,7 @@ export type LandSpecs = {
 };
 
 export type HousingSpecs = {
-  konutType?: string; // "Daire" | "Residans" | "Villa" | "Müstakil Ev" | "Apartman";
+  konutType?: string; // "Daire" | "Rezidans" | "Villa" | "Müstakil Ev" | "Apartman";
   brutMetrekare?: number; // m² (Brüt)
   netMetrekare?: number; // m² (Net)
   odaSayisi?: number;

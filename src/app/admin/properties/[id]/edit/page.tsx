@@ -355,16 +355,15 @@ export default function EditPropertyPage({
       await updateProperty(property.id, updateData);
       setSuccess("İlan başarıyla güncellendi!");
 
-      // 2 saniye sonra dashboard'a yönlendir
+      // 1 saniye sonra dashboard'a yönlendir
       setTimeout(() => {
         router.push("/admin/dashboard");
-      }, 2000);
+      }, 1000);
     } catch (err: unknown) {
       setError(
         "İlan güncellenirken hata: " +
           (err instanceof Error ? err.message : "Bilinmeyen hata")
       );
-    } finally {
       setSaving(false);
     }
   };
@@ -459,7 +458,7 @@ export default function EditPropertyPage({
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">
-                Sorumlu Kişi
+                Danışman
               </label>
               <select
                 value={selectedResponsibleId}
@@ -484,7 +483,7 @@ export default function EditPropertyPage({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Şehir, ilçe"
+                placeholder="Semt, İlçe, Şehir"
                 required
               />
             </div>
@@ -499,7 +498,7 @@ export default function EditPropertyPage({
                 onChange={(e) => setPrice(formatTrThousands(e.target.value))}
                 inputMode="numeric"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="1.500.000 TL"
+                placeholder="6.500.000 TL"
                 required
               />
             </div>
@@ -700,8 +699,6 @@ export default function EditPropertyPage({
                   </select>
                 </div>
 
-                {/* Duplicate removed: Banyo Sayısı handled above with `bathrooms` */}
-
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
                     Kullanım Durumu
@@ -799,7 +796,8 @@ export default function EditPropertyPage({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
-                    İlan URL
+                    İlan URL (Sahibinden veya hepsemlak gibi sitelerden alınan
+                    ilanın URL&apos;si)
                   </label>
                   <input
                     type="url"
@@ -926,7 +924,7 @@ export default function EditPropertyPage({
                     value={imarDurumu}
                     onChange={(e) => setImarDurumu(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Konut İmarlı"
+                    placeholder="Tarla, Konut İmarlı, Ticari İmarlı, Arsa İmarlı..."
                   />
                 </div>
 
@@ -1049,7 +1047,7 @@ export default function EditPropertyPage({
                     value={tapuDurumu}
                     onChange={(e) => setTapuDurumu(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Hisseli Değil"
+                    placeholder="Hisseli Tapu, Müstakil Tapu, Kooperatif Hisseli Tapu..."
                   />
                 </div>
 
@@ -1088,7 +1086,7 @@ export default function EditPropertyPage({
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Arsa açıklaması"
+                  placeholder="İlan açıklaması"
                 />
               </div>
 
@@ -1112,61 +1110,6 @@ export default function EditPropertyPage({
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Resim Yönetimi
             </h3>
-
-            {/* Mevcut Resimler */}
-            {images.length > 0 && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Mevcut Resimler ({images.length}/10)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="relative rounded-lg overflow-hidden bg-white shadow-sm"
-                    >
-                      <img
-                        src={image}
-                        alt={`Resim ${index + 1}`}
-                        className="w-full h-24 object-contain"
-                      />
-                      <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() => setAsMainImage(index)}
-                          className={`px-2 py-1 text-xs rounded ${
-                            index === 0
-                              ? "bg-green-600 text-white"
-                              : "bg-blue-600 text-white hover:bg-blue-700"
-                          }`}
-                        >
-                          {index === 0 ? "Ana Resim" : "Ana Resim Yap"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                        >
-                          Sil
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  {pendingUploadCount > 0 &&
-                    Array.from({ length: pendingUploadCount }).map((_, i) => (
-                      <div
-                        key={`pending-${i}`}
-                        className="relative rounded-lg overflow-hidden bg-white shadow-sm"
-                      >
-                        <div className="w-full h-24 bg-gray-200 animate-pulse" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="h-6 w-6 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
 
             {/* Yeni Resim Ekleme */}
             <div>
@@ -1199,31 +1142,54 @@ export default function EditPropertyPage({
               </p>
             </div>
 
-            {/* Ana Resim Seçimi */}
+            {/* Mevcut Resimler */}
             {images.length > 0 && (
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Ana Resim
-                </label>
-                <div className="flex gap-2 flex-wrap">
+              <div className="mb-4 mt-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image, index) => (
-                    <button
+                    <div
                       key={index}
-                      type="button"
-                      onClick={() => setAsMainImage(index)}
-                      className={`p-2 rounded-lg border-2 transition-colors ${
-                        index === 0
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className="relative rounded-lg overflow-hidden bg-white shadow-sm"
                     >
                       <img
                         src={image}
                         alt={`Resim ${index + 1}`}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-full h-24 object-contain"
                       />
-                    </button>
+                      <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => setAsMainImage(index)}
+                          className={`px-2 py-1 text-[10px] rounded ${
+                            index === 0
+                              ? "bg-green-600 text-white"
+                              : "bg-blue-600 text-white hover:bg-blue-700"
+                          }`}
+                        >
+                          {index === 0 ? "Ana Resim" : "Ana Resim Yap"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="px-2 py-1 text-[10px] bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                          Sil
+                        </button>
+                      </div>
+                    </div>
                   ))}
+                  {pendingUploadCount > 0 &&
+                    Array.from({ length: pendingUploadCount }).map((_, i) => (
+                      <div
+                        key={`pending-${i}`}
+                        className="relative rounded-lg overflow-hidden bg-white shadow-sm"
+                      >
+                        <div className="w-full h-24 bg-gray-200 animate-pulse" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="h-6 w-6 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -1234,8 +1200,30 @@ export default function EditPropertyPage({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
+              {saving && (
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              )}
               {saving ? "Güncelleniyor..." : "İlanı Güncelle"}
             </button>
 
