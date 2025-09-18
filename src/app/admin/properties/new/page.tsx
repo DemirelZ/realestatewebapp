@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getFirebaseClients } from "@/lib/firebase";
@@ -40,7 +40,7 @@ export default function NewPropertyPage() {
   const [category, setCategory] = useState<"Konut" | "Arsa">("Konut");
   const [bedrooms, setBedrooms] = useState(1);
   const [bathrooms, setBathrooms] = useState(1);
-  const [featured, setFeatured] = useState(false);
+  const [featured, setFeatured] = useState(true);
   const [description, setDescription] = useState("");
 
   // Housing specs
@@ -96,6 +96,8 @@ export default function NewPropertyPage() {
   // Images
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [pendingUploadCount, setPendingUploadCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -125,6 +127,7 @@ export default function NewPropertyPage() {
     }
 
     setUploadingImages(true);
+    setPendingUploadCount((prev) => prev + fileArray.length);
     try {
       const uploadedUrls: string[] = [];
 
@@ -136,17 +139,23 @@ export default function NewPropertyPage() {
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         uploadedUrls.push(url);
+        setPendingUploadCount((prev) => Math.max(0, prev - 1));
       }
 
       setImages((prev) => [...prev, ...uploadedUrls]);
       setError(null);
     } catch (err: unknown) {
+      console.error("[PROPERTIES] Image upload error", err);
       setError(
         "Resim yüklenirken hata: " +
           (err instanceof Error ? err.message : "Bilinmeyen hata")
       );
     } finally {
       setUploadingImages(false);
+      setPendingUploadCount(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -249,6 +258,7 @@ export default function NewPropertyPage() {
       await createProperty(propertyData);
       router.replace("/admin/dashboard");
     } catch (err: unknown) {
+      console.error("[PROPERTIES] Submit error", err);
       setError(err instanceof Error ? err.message : "Kayıt başarısız");
     } finally {
       setSaving(false);
@@ -977,91 +987,85 @@ export default function NewPropertyPage() {
               Resim Yönetimi
             </h3>
 
-            {/* Mevcut Resimler */}
-            {images.length > 0 && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Mevcut Resimler ({images.length}/10)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={image}
-                        alt={`Resim ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setAsMainImage(index)}
-                            className={`px-2 py-1 text-xs rounded ${
-                              index === 0
-                                ? "bg-green-600 text-white"
-                                : "bg-blue-600 text-white hover:bg-blue-700"
-                            }`}
-                          >
-                            {index === 0 ? "Ana Resim" : "Ana Yap"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                          >
-                            Sil
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Yeni Resim Ekleme */}
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Yeni Resim Ekle
               </label>
               <input
+                id="property-images"
+                ref={fileInputRef}
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e.target.files)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="sr-only"
                 disabled={uploadingImages || images.length >= 10}
               />
+              <label
+                htmlFor="property-images"
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                  uploadingImages || images.length >= 10
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
+                }`}
+                aria-disabled={uploadingImages || images.length >= 10}
+              >
+                📷 Resim Seç
+              </label>
               <p className="text-sm text-gray-600 mt-1">
                 Maksimum 10 resim. {images.length}/10 kullanıldı.
               </p>
             </div>
 
-            {/* Ana Resim Seçimi */}
+            {/* Eklenen Resimler */}
             {images.length > 0 && (
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Ana Resim
-                </label>
-                <div className="flex gap-2 flex-wrap">
+              <div className="mb-4 mt-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image, index) => (
-                    <button
+                    <div
                       key={index}
-                      type="button"
-                      onClick={() => setAsMainImage(index)}
-                      className={`p-2 rounded-lg border-2 transition-colors ${
-                        index === 0
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className="relative rounded-lg overflow-hidden bg-white shadow-sm"
                     >
                       <img
                         src={image}
                         alt={`Resim ${index + 1}`}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-full h-24 object-contain"
                       />
-                    </button>
+                      <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => setAsMainImage(index)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            index === 0
+                              ? "bg-green-600 text-white"
+                              : "bg-blue-600 text-white hover:bg-blue-700"
+                          }`}
+                        >
+                          {index === 0 ? "Ana Resim" : "Ana Resim Yap"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                          Sil
+                        </button>
+                      </div>
+                    </div>
                   ))}
+                  {pendingUploadCount > 0 &&
+                    Array.from({ length: pendingUploadCount }).map((_, i) => (
+                      <div
+                        key={`pending-${i}`}
+                        className="relative rounded-lg overflow-hidden bg-white shadow-sm"
+                      >
+                        <div className="w-full h-24 bg-gray-200 animate-pulse" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="h-6 w-6 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             )}

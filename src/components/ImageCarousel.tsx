@@ -87,7 +87,7 @@ export default function ImageCarousel({
           src={displayImages[currentIndex]}
           alt={alt}
           fill
-          className="object-cover select-none"
+          className="object-contain select-none"
           priority
           draggable={false}
         />

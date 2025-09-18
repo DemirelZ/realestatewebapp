@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getFirebaseClients } from "@/lib/firebase";
@@ -103,6 +103,8 @@ export default function EditPropertyPage({
   // Images
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [pendingUploadCount, setPendingUploadCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -227,6 +229,7 @@ export default function EditPropertyPage({
     }
 
     setUploadingImages(true);
+    setPendingUploadCount((prev) => prev + fileArray.length);
     try {
       const uploadedUrls: string[] = [];
 
@@ -238,6 +241,7 @@ export default function EditPropertyPage({
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         uploadedUrls.push(url);
+        setPendingUploadCount((prev) => Math.max(0, prev - 1));
       }
 
       setImages((prev: string[]) => [...prev, ...uploadedUrls]);
@@ -249,6 +253,10 @@ export default function EditPropertyPage({
       );
     } finally {
       setUploadingImages(false);
+      setPendingUploadCount(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -1113,36 +1121,49 @@ export default function EditPropertyPage({
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image, index) => (
-                    <div key={index} className="relative group">
+                    <div
+                      key={index}
+                      className="relative rounded-lg overflow-hidden bg-white shadow-sm"
+                    >
                       <img
                         src={image}
                         alt={`Resim ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg"
+                        className="w-full h-24 object-contain"
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setAsMainImage(index)}
-                            className={`px-2 py-1 text-xs rounded ${
-                              index === 0
-                                ? "bg-green-600 text-white"
-                                : "bg-blue-600 text-white hover:bg-blue-700"
-                            }`}
-                          >
-                            {index === 0 ? "Ana Resim" : "Ana Yap"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                          >
-                            Sil
-                          </button>
-                        </div>
+                      <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => setAsMainImage(index)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            index === 0
+                              ? "bg-green-600 text-white"
+                              : "bg-blue-600 text-white hover:bg-blue-700"
+                          }`}
+                        >
+                          {index === 0 ? "Ana Resim" : "Ana Resim Yap"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                          Sil
+                        </button>
                       </div>
                     </div>
                   ))}
+                  {pendingUploadCount > 0 &&
+                    Array.from({ length: pendingUploadCount }).map((_, i) => (
+                      <div
+                        key={`pending-${i}`}
+                        className="relative rounded-lg overflow-hidden bg-white shadow-sm"
+                      >
+                        <div className="w-full h-24 bg-gray-200 animate-pulse" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="h-6 w-6 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -1153,13 +1174,26 @@ export default function EditPropertyPage({
                 Yeni Resim Ekle
               </label>
               <input
+                id="property-images-edit"
+                ref={fileInputRef}
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e.target.files)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="sr-only"
                 disabled={uploadingImages || images.length >= 10}
               />
+              <label
+                htmlFor="property-images-edit"
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                  uploadingImages || images.length >= 10
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
+                }`}
+                aria-disabled={uploadingImages || images.length >= 10}
+              >
+                📷 Resim Seç
+              </label>
               <p className="text-sm text-gray-600 mt-1">
                 Maksimum 10 resim. {images.length}/10 kullanıldı.
               </p>
