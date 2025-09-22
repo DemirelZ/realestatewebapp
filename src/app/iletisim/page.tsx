@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import ContactMap from "../../components/ContactMap";
 
 export default function IletisimPage() {
   const [formData, setFormData] = useState({
@@ -11,9 +9,12 @@ export default function IletisimPage() {
     phone: "",
     subject: "",
     message: "",
+    website: "", // Honeypot
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -29,22 +30,43 @@ export default function IletisimPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+    setSubmitSuccess(null);
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // 30sn client-side throttle
+      const now = Date.now();
+      const last = Number(localStorage.getItem("contact_last_submit") || 0);
+      const diff = now - last;
+      if (diff < 30000) {
+        const remain = Math.ceil((30000 - diff) / 1000);
+        throw new Error(`Lütfen ${remain} sn sonra tekrar deneyin.`);
+      }
 
-    alert(
-      "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız."
-    );
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
-    setIsSubmitting(false);
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error("Gönderim başarısız");
+      setSubmitSuccess(
+        "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız."
+      );
+      localStorage.setItem("contact_last_submit", String(now));
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        website: "",
+      });
+    } catch {
+      setSubmitError("Bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,13 +136,12 @@ export default function IletisimPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                       Adres
                     </h3>
-                    <p className="text-gray-600">
-                      Merkez Mahallesi, Emlak Caddesi No:123
-                      <br />
-                      Kadıköy, İstanbul 34700
-                      <br />
-                      Türkiye
-                    </p>
+                    <div>
+                      <p className="text-gray-600">Altay Mahallesi</p>
+                      <p className="text-gray-600">Söğüt Caddesi No:37/2</p>
+                      <p className="text-gray-600">(Arya Nüans Residence)</p>
+                      <p className="text-gray-600">Eryaman, Ankara, Türkiye</p>
+                    </div>
                   </div>
                 </div>
 
@@ -148,18 +169,18 @@ export default function IletisimPage() {
                     <div className="space-y-1">
                       <p className="text-gray-600">
                         <a
-                          href="tel:+902161234567"
+                          href="tel:+905300124637"
                           className="hover:text-blue-600 transition-colors"
                         >
-                          +90 (216) 123 45 67
+                          +90 (530) 012 46 37
                         </a>
                       </p>
                       <p className="text-gray-600">
                         <a
-                          href="tel:+902161234568"
+                          href="tel:+905057832548"
                           className="hover:text-blue-600 transition-colors"
                         >
-                          +90 (216) 123 45 68
+                          +90 (505) 783 25 48
                         </a>
                       </p>
                     </div>
@@ -190,18 +211,10 @@ export default function IletisimPage() {
                     <div className="space-y-1">
                       <p className="text-gray-600">
                         <a
-                          href="mailto:info@neseligayrimenkul.com"
+                          href="mailto:neseligayrimenkul@gmail.com"
                           className="hover:text-blue-600 transition-colors"
                         >
-                          info@neseligayrimenkul.com
-                        </a>
-                      </p>
-                      <p className="text-gray-600">
-                        <a
-                          href="mailto:destek@neseligayrimenkul.com"
-                          className="hover:text-blue-600 transition-colors"
-                        >
-                          destek@neseligayrimenkul.com
+                          neseligayrimenkul@gmail.com
                         </a>
                       </p>
                     </div>
@@ -231,45 +244,9 @@ export default function IletisimPage() {
                     </h3>
                     <div className="space-y-1">
                       <p className="text-gray-600">
-                        Pazartesi - Cuma: 09:00 - 18:00
+                        Pazartesi - Pazar: 09:00 - 19:00
                       </p>
-                      <p className="text-gray-600">Cumartesi: 09:00 - 16:00</p>
-                      <p className="text-gray-600">Pazar: Kapalı</p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Emergency Contact */}
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-6 h-6 text-red-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Acil Durum
-                    </h3>
-                    <p className="text-gray-600">
-                      <a
-                        href="tel:+905551234567"
-                        className="hover:text-red-600 transition-colors font-medium"
-                      >
-                        +90 (555) 123 45 67
-                      </a>
-                      <br />
-                      <span className="text-sm text-gray-500">7/24 hizmet</span>
-                    </p>
                   </div>
                 </div>
               </div>
@@ -292,18 +269,7 @@ export default function IletisimPage() {
                       <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
                     </svg>
                   </a>
-                  <a
-                    href="#"
-                    className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
-                  >
-                    <svg
-                      className="w-6 h-6 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z" />
-                    </svg>
-                  </a>
+
                   <a
                     href="#"
                     className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center hover:bg-pink-700 transition-colors"
@@ -354,7 +320,7 @@ export default function IletisimPage() {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900 placeholder-gray-500"
                       placeholder="Adınız ve soyadınız"
                     />
                   </div>
@@ -373,7 +339,7 @@ export default function IletisimPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900 placeholder-gray-500"
                       placeholder="ornek@email.com"
                     />
                   </div>
@@ -393,7 +359,7 @@ export default function IletisimPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900 placeholder-gray-500"
                       placeholder="+90 (5XX) XXX XX XX"
                     />
                   </div>
@@ -411,7 +377,7 @@ export default function IletisimPage() {
                       value={formData.subject}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900"
                     >
                       <option value="">Konu seçiniz</option>
                       <option value="genel">Genel Bilgi</option>
@@ -439,10 +405,31 @@ export default function IletisimPage() {
                     onChange={handleInputChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none text-gray-900 placeholder-gray-500"
                     placeholder="Mesajınızı buraya yazın..."
                   ></textarea>
                 </div>
+
+                {/* Honeypot field (hidden) */}
+                <div className="hidden" aria-hidden>
+                  <label htmlFor="website">Web Sitesi</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleInputChange}
+                    autoComplete="off"
+                    tabIndex={-1}
+                  />
+                </div>
+
+                {submitError ? (
+                  <p className="text-sm text-red-600">{submitError}</p>
+                ) : null}
+                {submitSuccess ? (
+                  <p className="text-sm text-green-600">{submitSuccess}</p>
+                ) : null}
 
                 <button
                   type="submit"
@@ -484,6 +471,7 @@ export default function IletisimPage() {
       </section>
 
       {/* Map Section */}
+
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -496,90 +484,16 @@ export default function IletisimPage() {
           </div>
 
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <ContactMap />
-
-            <div className="p-6 bg-gray-50">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Toplu Taşıma
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    Kadıköy Metro İstasyonu'na 5 dk yürüme mesafesi
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Otopark</h4>
-                  <p className="text-gray-600 text-sm">
-                    Binamızda ücretsiz müşteri otoparkı mevcuttur
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Erişilebilirlik
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    Engelli erişimine uygun rampa ve asansör
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Sık Sorulan Sorular
-            </h2>
-            <p className="text-lg text-gray-600">
-              En çok merak edilen konular hakkında bilgi alın
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Hangi bölgelerde hizmet veriyorsunuz?
-              </h3>
-              <p className="text-gray-600">
-                İstanbul, Ankara, İzmir ve Bursa'da aktif olarak hizmet
-                veriyoruz. Diğer şehirler için de danışmanlık hizmeti sunuyoruz.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                İlan vermek için ne yapmam gerekiyor?
-              </h3>
-              <p className="text-gray-600">
-                İletişim formunu doldurarak veya telefon ile bize
-                ulaşabilirsiniz. Uzman ekibimiz size yardımcı olacaktır.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Hizmet ücretleriniz nedir?
-              </h3>
-              <p className="text-gray-600">
-                Hizmet ücretlerimiz gayrimenkulün türüne ve değerine göre
-                değişmektedir. Detaylı bilgi için bizimle iletişime geçin.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Randevu alabilir miyim?
-              </h3>
-              <p className="text-gray-600">
-                Elbette! Telefon veya e-posta ile randevu alabilirsiniz. Size en
-                uygun zamanda görüşme yapabiliriz.
-              </p>
-            </div>
+            <iframe
+              src="https://www.google.com/maps?q=39.96586054762177, 32.64664593685745&hl=tr&z=16&output=embed"
+              width="100%"
+              height="443"
+              style={{ border: 0 }}
+              allowFullScreen
+              aria-hidden="false"
+              tabIndex={0}
+              loading="lazy"
+            ></iframe>
           </div>
         </div>
       </section>

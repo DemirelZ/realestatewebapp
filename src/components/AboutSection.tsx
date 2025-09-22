@@ -108,7 +108,7 @@ export default function AboutSection() {
             <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-6 max-w-xs">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
-                  500+
+                  1000+
                 </div>
                 <div className="text-gray-600">Mutlu Müşteri</div>
                 <div className="flex justify-center mt-2">

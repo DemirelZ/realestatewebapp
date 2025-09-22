@@ -4,18 +4,25 @@ import { useEffect, useState } from "react";
 import ListingCard from "@/components/ListingCard";
 import type { Property } from "@/data/properties";
 import Link from "next/link";
+import Spinner from "@/components/Spinner";
 
 export default function SatilikPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [selectedRoomType, setSelectedRoomType] = useState("");
   const [items, setItems] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/properties");
-      const json = (await res.json()) as { data: Property[] };
-      setItems(json.data || []);
+      try {
+        setLoading(true);
+        const res = await fetch("/api/properties");
+        const json = (await res.json()) as { data: Property[] };
+        setItems(json.data || []);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
@@ -63,83 +70,18 @@ export default function SatilikPage() {
         </div>
       </section>
 
-      {/* Filtreler */}
-      <section className="py-8 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap gap-4 items-center justify-center">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Konum
-              </label>
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Tüm Konumlar</option>
-                <option value="İstanbul">İstanbul</option>
-                <option value="Ankara">Ankara</option>
-                <option value="İzmir">İzmir</option>
-                <option value="Bursa">Bursa</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fiyat Aralığı
-              </label>
-              <select
-                value={selectedPriceRange}
-                onChange={(e) => setSelectedPriceRange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Tüm Fiyatlar</option>
-                <option value="0-2000000">0 - 2.000.000 TL</option>
-                <option value="2000000-5000000">
-                  2.000.000 - 5.000.000 TL
-                </option>
-                <option value="5000000+">5.000.000+ TL</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Oda Tipi
-              </label>
-              <select
-                value={selectedRoomType}
-                onChange={(e) => setSelectedRoomType(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Tüm Tipler</option>
-                <option value="1+1">1+1</option>
-                <option value="2+1">2+1</option>
-                <option value="3+1">3+1</option>
-                <option value="4+1">4+1</option>
-                <option value="5+">5+ Oda</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Emlak Listesi */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Satılık Emlaklar
-            </h2>
-            <p className="text-lg text-gray-600">
-              {filteredEmlaklar.length} adet emlak bulundu
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEmlaklar.map((emlak) => (
-              <ListingCard key={emlak.id} property={emlak} />
-            ))}
-          </div>
+          {loading ? (
+            <Spinner label="İlanlar yükleniyor" />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredEmlaklar.map((emlak) => (
+                <ListingCard key={emlak.id} property={emlak} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -18,6 +18,12 @@ import {
   updateAnnouncement,
   type Announcement,
 } from "@/lib/announcements";
+import {
+  getAllContactMessages,
+  updateContactMessage,
+  deleteContactMessage,
+  type ContactMessage,
+} from "@/lib/contactMessages";
 
 export default function AdminDashboardPage() {
   const { auth } = getFirebaseClients();
@@ -36,9 +42,14 @@ export default function AdminDashboardPage() {
   const [ann, setAnn] = useState<Announcement[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"properties" | "team" | "ann">(
-    "properties"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "properties" | "team" | "ann" | "messages"
+  >("properties");
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [messagesFilter, setMessagesFilter] = useState<"all" | "unread">("all");
+  const [messageActionLoading, setMessageActionLoading] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     console.log("Dashboard useEffect running, auth:", auth);
@@ -54,10 +65,11 @@ export default function AdminDashboardPage() {
       setUserLoggedIn(true);
       try {
         console.log("Fetching properties...");
-        const [props, teamMembers, announcements] = await Promise.all([
+        const [props, teamMembers, announcements, msgs] = await Promise.all([
           getAllPropertiesFromDb(),
           getAllTeamMembersFromDbAdmin(),
           getAllAnnouncementsFromDbAdmin(),
+          getAllContactMessages(),
         ]);
         console.log("Properties fetched:", props);
         console.log("Team fetched:", teamMembers);
@@ -65,6 +77,7 @@ export default function AdminDashboardPage() {
         setItems(props);
         setTeam(teamMembers);
         setAnn(announcements);
+        setMessages(msgs);
       } catch (err: unknown) {
         console.error("Error fetching properties:", err);
         const message =
@@ -154,6 +167,33 @@ export default function AdminDashboardPage() {
       );
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleMarkRead = async (id: string, read: boolean) => {
+    try {
+      setMessageActionLoading(id);
+      await updateContactMessage(id, { read });
+      setMessages((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, read } : m))
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMessageActionLoading(null);
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("Bu mesajı silmek istediğinizden emin misiniz?")) return;
+    try {
+      setMessageActionLoading(id);
+      await deleteContactMessage(id);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMessageActionLoading(null);
     }
   };
 
@@ -261,6 +301,16 @@ export default function AdminDashboardPage() {
           >
             Duyurular
           </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`px-4 py-2 rounded-lg border ${
+              activeTab === "messages"
+                ? "bg-emerald-600 text-white border-emerald-600"
+                : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+            }`}
+          >
+            Mesajlar
+          </button>
         </div>
 
         {activeTab === "properties" && (
@@ -364,6 +414,159 @@ export default function AdminDashboardPage() {
                               className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed button"
                             >
                               {deletingId === p.id ? "⏳ Siliniyor..." : "Sil"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "messages" && (
+          <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <span>✉️</span>
+                <span>Gelen Mesajlar ({messages.length})</span>
+              </h3>
+              <div className="flex items-center gap-3">
+                <label className="text-sm text-gray-800">Filtre:</label>
+                <select
+                  value={messagesFilter}
+                  onChange={(e) =>
+                    setMessagesFilter(
+                      (e.target as HTMLSelectElement).value === "unread"
+                        ? "unread"
+                        : "all"
+                    )
+                  }
+                  className="px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-900"
+                >
+                  <option value="all">Tümü</option>
+                  <option value="unread">Okunmamış</option>
+                </select>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Tarih
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      İsim
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      E-posta
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Telefon
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Konu
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Mesaj
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {(messagesFilter === "unread"
+                    ? messages.filter((m) => !m.read)
+                    : messages
+                  ).length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <span className="text-4xl">✉️</span>
+                          <p className="text-gray-500 text-lg">
+                            Henüz mesaj yok
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    (messagesFilter === "unread"
+                      ? messages.filter((m) => !m.read)
+                      : messages
+                    ).map((m, index) => (
+                      <tr
+                        key={m.id}
+                        className={`hover:bg-gray-50 transition-colors ${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                        } ${m.read ? "opacity-60" : ""}`}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {m.createdAt
+                            ? new Intl.DateTimeFormat("tr-TR", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              }).format(m.createdAt)
+                            : "-"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {m.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <a
+                            className="text-blue-600 underline"
+                            href={`mailto:${m.email}`}
+                          >
+                            {m.email}
+                          </a>
+                        </td>
+                        <td
+                          className={`px-6 py-4 whitespace-nowrap text-sm ${
+                            m.read ? "text-gray-500" : "text-gray-900"
+                          }`}
+                        >
+                          {m.phone || "-"}
+                        </td>
+                        <td
+                          className={`px-6 py-4 whitespace-nowrap text-sm ${
+                            m.read ? "text-gray-500" : "text-gray-900"
+                          }`}
+                        >
+                          {m.subject}
+                        </td>
+                        <td
+                          className={`px-6 py-4 text-sm max-w-xl ${
+                            m.read ? "text-gray-500" : "text-gray-700"
+                          }`}
+                        >
+                          {m.message}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex items-center gap-4">
+                            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 rounded accent-green-600"
+                                checked={Boolean(m.read)}
+                                onChange={(e) =>
+                                  handleMarkRead(m.id, e.target.checked)
+                                }
+                                disabled={messageActionLoading === m.id}
+                              />
+                              <span
+                                className={`${
+                                  m.read ? "text-green-700" : "text-gray-500"
+                                }`}
+                              >
+                                Okundu
+                              </span>
+                            </label>
+                            <button
+                              onClick={() => handleDeleteMessage(m.id)}
+                              disabled={messageActionLoading === m.id}
+                              className="text-red-600 hover:text-red-800 transition-colors"
+                            >
+                              🗑️ Sil
                             </button>
                           </div>
                         </td>

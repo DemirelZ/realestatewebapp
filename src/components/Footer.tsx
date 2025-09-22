@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -14,8 +15,7 @@ export default function Footer() {
               <span className="ml-3 text-xl font-bold">Neşeli Gayrimenkul</span>
             </div>
             <p className="text-gray-400 mb-4">
-              7 yılı aşkın deneyimimizle güvenilir emlak çözümleri sunuyoruz.
-              Hayalinizdeki evi bulmanıza yardımcı oluyoruz.
+              Hızlı ekspertiz <br /> Şeffaf komisyon <br /> Yerinde danışmanlık
             </p>
             <div className="flex space-x-4">
               <a
@@ -125,29 +125,14 @@ export default function Footer() {
                   Konut Kiralama
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/ticari"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Ticari Gayrimenkul
-                </Link>
+              <li className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                Ticari Gayrimenkul
               </li>
-              <li>
-                <Link
-                  href="/danismanlik"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Emlak Danışmanlığı
-                </Link>
+              <li className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                Emlak Danışmanlığı
               </li>
-              <li>
-                <Link
-                  href="/degerleme"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Gayrimenkul Değerleme
-                </Link>
+              <li className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                Gayrimenkul Değerleme
               </li>
             </ul>
           </div>
@@ -227,11 +212,11 @@ export default function Footer() {
 
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2026 Neşeli Gayrimenkul. Tüm hakları saklıdır.
+              © {currentYear} Neşeli Gayrimenkul. Tüm hakları saklıdır.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
-                href="/gizlilik"
+                href="/gizlilik-politikasi"
                 className="text-gray-400 hover:text-white text-sm transition-colors"
               >
                 Gizlilik Politikası

@@ -27,7 +27,7 @@ export default function HakkimizdaPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Hakkımızda</h1>
           <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-            Neşeli Gayrimenkul olarak 10 yılı aşkın süredir müşterilerimize
+            Neşeli Gayrimenkul olarak 7 yılı aşkın süredir müşterilerimize
             güvenilir ve profesyonel emlak hizmetleri sunuyoruz
           </p>
         </div>
@@ -42,20 +42,20 @@ export default function HakkimizdaPage() {
                 Hikayemiz
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                2014 yılında İstanbul&apos;da kurulan Neşeli Gayrimenkul, emlak
+                2018 yılında Ankara&apos;da kurulan Neşeli Gayrimenkul, emlak
                 sektöründe güvenilirlik ve kalite standartlarını yükseltmeyi
                 hedefleyen bir aile şirketi olarak yola çıktı.
               </p>
               <p className="text-lg text-gray-600 mb-6">
-                Kurucumuz Ahmet Neşeli&apos;nin 20 yıllık emlak deneyimi ve
+                Kurucumuz İsmail Neşeli&apos;nin 7 yıllık emlak deneyimi ve
                 vizyonu ile, müşterilerimize sadece ev satmak değil, hayal
                 kurmak ve bu hayalleri gerçeğe dönüştürmek için hizmet
                 veriyoruz.
               </p>
               <p className="text-lg text-gray-600">
-                Bugün 50&apos;den fazla deneyimli emlak danışmanımız ile
-                İstanbul, Ankara, İzmir ve Bursa&apos;da hizmet veriyor, her yıl
-                binlerce ailenin hayalindeki eve kavuşmasına yardımcı oluyoruz.
+                Bugün deneyimli emlak danışmanlarımız ile Ankara&apos;nın
+                çeşitli bölgelerinde hizmet veriyor, her yıl yüzlerce ailenin
+                hayalindeki gayrimenkule kavuşmasına yardımcı oluyoruz.
               </p>
             </div>
             <div className="relative">
@@ -313,27 +313,17 @@ export default function HakkimizdaPage() {
       {/* Team - renders only when data exists */}
       <TeamSection />
 
-      {/* Stats */}
-      <section className="py-16 bg-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">500+</div>
-              <div className="text-blue-100">Aktif İlan</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">1000+</div>
-              <div className="text-blue-100">Mutlu Müşteri</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Uzman Danışman</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">10+</div>
-              <div className="text-blue-100">Yıllık Deneyim</div>
-            </div>
-          </div>
+      {/* Image Section (replaces Stats) */}
+      <section className="relative">
+        <div className="relative h-64 md:h-80 lg:h-96">
+          <Image
+            src="/images/about/stats.jpg"
+            alt="Neşeli Gayrimenkul — Ofis ve ekip"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/30" />
         </div>
       </section>
 
