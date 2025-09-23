@@ -35,25 +35,72 @@ export default function IletisimPage() {
     setIsSubmitting(true);
 
     try {
-      // 30sn client-side throttle
+      // 60sn client-side throttle (artırıldı)
       const now = Date.now();
       const last = Number(localStorage.getItem("contact_last_submit") || 0);
       const diff = now - last;
-      if (diff < 30000) {
-        const remain = Math.ceil((30000 - diff) / 1000);
+      if (diff < 60000) {
+        const remain = Math.ceil((60000 - diff) / 1000);
         throw new Error(`Lütfen ${remain} sn sonra tekrar deneyin.`);
+      }
+
+      // Günlük gönderim limiti kontrolü
+      const today = new Date().toDateString();
+      const dailySubmits = Number(
+        localStorage.getItem(`contact_daily_${today}`) || 0
+      );
+      if (dailySubmits >= 5) {
+        throw new Error(
+          "Günlük gönderim limitiniz dolmuştur. Yarın tekrar deneyin."
+        );
+      }
+
+      // Form verilerini temizle
+      const cleanData = {
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        phone: formData.phone.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        website: formData.website.trim(), // honeypot
+      };
+
+      // Basit client-side validasyon
+      if (cleanData.name.length < 2) {
+        throw new Error("Ad soyad en az 2 karakter olmalıdır.");
+      }
+      if (cleanData.message.length < 10) {
+        throw new Error("Mesaj en az 10 karakter olmalıdır.");
+      }
+      if (cleanData.message.length > 2000) {
+        throw new Error("Mesaj en fazla 2000 karakter olabilir.");
       }
 
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanData),
       });
-      if (!res.ok) throw new Error("Gönderim başarısız");
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 429) {
+          throw new Error(
+            result.error || "Çok fazla mesaj gönderdiniz. Lütfen bekleyin."
+          );
+        }
+        throw new Error(result.error || "Gönderim başarısız");
+      }
+
       setSubmitSuccess(
         "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız."
       );
+
+      // Başarılı gönderim sonrası localStorage güncelle
       localStorage.setItem("contact_last_submit", String(now));
+      localStorage.setItem(`contact_daily_${today}`, String(dailySubmits + 1));
+
       setFormData({
         name: "",
         email: "",
@@ -62,8 +109,12 @@ export default function IletisimPage() {
         message: "",
         website: "",
       });
-    } catch {
-      setSubmitError("Bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+      );
     } finally {
       setIsSubmitting(false);
     }

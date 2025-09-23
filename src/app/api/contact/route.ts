@@ -1,31 +1,90 @@
 import { NextResponse } from "next/server";
 import { createContactMessage } from "@/lib/contactMessages";
+import {
+  getClientIP,
+  getUserAgent,
+  isSuspiciousIP,
+  isSuspiciousUserAgent,
+  checkRateLimit,
+  validateAndSanitizeFormData,
+} from "@/lib/security";
 import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { name, email, phone, subject, message, website } = body || {};
+    // Güvenlik kontrolleri
+    const clientIP = getClientIP();
+    const userAgent = getUserAgent();
 
-    // Honeypot: eğer doluysa sessizce başarı dön (spam'i kayıt etme)
-    if (typeof website === "string" && website.trim().length > 0) {
+    // Şüpheli IP kontrolü
+    if (isSuspiciousIP(clientIP)) {
+      console.log("Suspicious IP blocked:", clientIP);
+      return NextResponse.json({ ok: true }); // Spam'a sessizce başarı dön
+    }
+
+    // Şüpheli User-Agent kontrolü
+    if (isSuspiciousUserAgent(userAgent)) {
+      console.log("Suspicious User-Agent blocked:", userAgent);
       return NextResponse.json({ ok: true });
     }
 
-    if (!name || !email || !subject || !message) {
+    // Rate limiting kontrolü
+    const rateLimit = checkRateLimit(clientIP, 3, 15 * 60 * 1000); // 15 dakikada max 3 mesaj
+    if (!rateLimit.allowed) {
+      console.log("Rate limit exceeded for IP:", clientIP);
       return NextResponse.json(
-        { error: "Eksik alanlar var." },
+        {
+          error:
+            "Çok fazla mesaj gönderdiniz. Lütfen 15 dakika sonra tekrar deneyin.",
+          resetTime: rateLimit.resetTime,
+        },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json();
+
+    // Form validasyonu ve temizleme
+    const validation = validateAndSanitizeFormData(body);
+    if (!validation.isValid) {
+      console.log("Form validation failed:", validation.errors);
+      return NextResponse.json(
+        { error: "Geçersiz form verisi", details: validation.errors },
         { status: 400 }
       );
     }
 
+    const { name, email, phone, subject, message } = validation.sanitizedData;
+
     // Firebase'e kaydet
-    await createContactMessage({ name, email, phone, subject, message });
+    await createContactMessage({
+      name: name!,
+      email: email!,
+      phone: phone || undefined,
+      subject: subject!,
+      message: message!,
+    });
 
     // E-posta gönder
-    await sendEmailNotification({ name, email, phone, subject, message });
+    await sendEmailNotification({
+      name: name!,
+      email: email!,
+      phone: phone || undefined,
+      subject: subject!,
+      message: message!,
+    });
 
-    return NextResponse.json({ ok: true });
+    console.log(
+      `Contact form submitted successfully from IP: ${clientIP}, Rate limit remaining: ${rateLimit.remaining}`
+    );
+
+    return NextResponse.json({
+      ok: true,
+      rateLimit: {
+        remaining: rateLimit.remaining,
+        resetTime: rateLimit.resetTime,
+      },
+    });
   } catch (err) {
     console.error("Contact form error:", err);
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
