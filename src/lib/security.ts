@@ -2,8 +2,8 @@
 import { headers } from "next/headers";
 
 // IP adresini al
-export function getClientIP(): string {
-  const headersList = headers();
+export async function getClientIP(): Promise<string> {
+  const headersList = await headers();
   const forwarded = headersList.get("x-forwarded-for");
   const realIP = headersList.get("x-real-ip");
 
@@ -19,13 +19,13 @@ export function getClientIP(): string {
 }
 
 // User-Agent kontrolü
-export function getUserAgent(): string {
-  const headersList = headers();
+export async function getUserAgent(): Promise<string> {
+  const headersList = await headers();
   return headersList.get("user-agent") || "unknown";
 }
 
 // Şüpheli IP'leri kontrol et (basit blacklist)
-const suspiciousIPs = new Set([
+const suspiciousIPs = new Set<string>([
   // Bot IP'leri, VPN'ler vb. eklenebilir
 ]);
 
@@ -136,6 +136,7 @@ export function validateAndSanitizeFormData(data: {
   subject?: string;
   message?: string;
   website?: string;
+  kvkkConsent?: boolean;
 }) {
   const errors: string[] = [];
 
@@ -182,6 +183,11 @@ export function validateAndSanitizeFormData(data: {
     errors.push("Mesaj en fazla 2000 karakter olabilir");
   } else if (containsSpamKeywords(data.message)) {
     errors.push("Mesaj içeriği uygun değil");
+  }
+
+  // KVKK onay kontrolü
+  if (!data.kvkkConsent) {
+    errors.push("KVKK onayı gereklidir");
   }
 
   // Website honeypot kontrolü

@@ -13,8 +13,8 @@ import nodemailer from "nodemailer";
 export async function POST(request: Request) {
   try {
     // Güvenlik kontrolleri
-    const clientIP = getClientIP();
-    const userAgent = getUserAgent();
+    const clientIP = await getClientIP();
+    const userAgent = await getUserAgent();
 
     // Şüpheli IP kontrolü
     if (isSuspiciousIP(clientIP)) {
@@ -43,6 +43,29 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+
+    // Debug için gelen veriyi logla
+    console.log("Received form data:", {
+      name: body.name,
+      email: body.email,
+      subject: body.subject,
+      kvkkConsent: body.kvkkConsent,
+      kvkkConsentType: typeof body.kvkkConsent,
+    });
+
+    // KVKK onay kontrolü
+    if (!body.kvkkConsent) {
+      console.log(
+        "KVKK consent not provided from IP:",
+        clientIP,
+        "Body:",
+        body
+      );
+      return NextResponse.json(
+        { error: "KVKK onayı gereklidir." },
+        { status: 400 }
+      );
+    }
 
     // Form validasyonu ve temizleme
     const validation = validateAndSanitizeFormData(body);

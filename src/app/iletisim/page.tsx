@@ -10,6 +10,7 @@ export default function IletisimPage() {
     subject: "",
     message: "",
     website: "", // Honeypot
+    kvkkConsent: false, // KVKK onayı
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,10 +22,22 @@ export default function IletisimPage() {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+
+    // Debug için checkbox değişikliklerini logla
+    if (name === "kvkkConsent") {
+      console.log("KVKK checkbox changed:", {
+        name,
+        checked,
+        type,
+        value,
+      });
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -63,7 +76,17 @@ export default function IletisimPage() {
         subject: formData.subject.trim(),
         message: formData.message.trim(),
         website: formData.website.trim(), // honeypot
+        kvkkConsent: formData.kvkkConsent, // KVKK onayı
       };
+
+      // Debug için form verilerini logla
+      console.log("Form data before validation:", {
+        name: cleanData.name,
+        email: cleanData.email,
+        subject: cleanData.subject,
+        kvkkConsent: cleanData.kvkkConsent,
+        kvkkConsentType: typeof cleanData.kvkkConsent,
+      });
 
       // Basit client-side validasyon
       if (cleanData.name.length < 2) {
@@ -74,6 +97,9 @@ export default function IletisimPage() {
       }
       if (cleanData.message.length > 2000) {
         throw new Error("Mesaj en fazla 2000 karakter olabilir.");
+      }
+      if (!cleanData.kvkkConsent) {
+        throw new Error("KVKK onayı gereklidir.");
       }
 
       const res = await fetch("/api/contact", {
@@ -108,6 +134,7 @@ export default function IletisimPage() {
         subject: "",
         message: "",
         website: "",
+        kvkkConsent: false,
       });
     } catch (error) {
       setSubmitError(
@@ -459,6 +486,39 @@ export default function IletisimPage() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none text-gray-900 placeholder-gray-500"
                     placeholder="Mesajınızı buraya yazın..."
                   ></textarea>
+                </div>
+
+                {/* KVKK Onay Kutusu */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="kvkkConsent"
+                    name="kvkkConsent"
+                    checked={formData.kvkkConsent}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="kvkkConsent"
+                    className="text-sm text-gray-700 leading-relaxed"
+                  >
+                    <span className="text-red-500">*</span>{" "}
+                    <strong>
+                      Kişisel Verilerin Korunması Kanunu (KVKK) Onayı:
+                    </strong>{" "}
+                    Mesajımın talebim hakkında dönüş yapılması amacıyla
+                    işlenmesini, verilerimin 3 yıl süreyle saklanmasını ve{" "}
+                    <a
+                      href="/gizlilik-politikasi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 underline"
+                    >
+                      gizlilik politikası
+                    </a>{" "}
+                    kapsamında korunmasını kabul ediyorum.
+                  </label>
                 </div>
 
                 {/* Honeypot field (hidden) */}

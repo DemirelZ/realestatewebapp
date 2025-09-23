@@ -21,11 +21,24 @@ export default function GizlilikPolitikasiPage() {
       </p>
 
       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
-        Toplanan Veriler
+        Toplanan Kişisel Veriler
       </h2>
+      <p className="text-gray-800 dark:text-gray-200 mb-4">
+        <strong>İletişim Formu:</strong> Web sitemizdeki iletişim formu
+        aracılığıyla aşağıdaki kişisel verilerinizi topluyoruz:
+      </p>
+      <ul className="list-disc list-inside text-gray-800 dark:text-gray-200 mb-4 space-y-1">
+        <li>Ad ve soyadınız</li>
+        <li>E-posta adresiniz</li>
+        <li>Telefon numaranız (opsiyonel)</li>
+        <li>Gönderdiğiniz mesaj içeriği</li>
+        <li>İletişim tarihi ve saati</li>
+      </ul>
       <p className="text-gray-800 dark:text-gray-200 mb-6">
-        Site ziyaretçilerinden <strong>herhangi bir kişisel veri</strong> (isim,
-        e-posta, telefon vb.) toplanmamaktadır.
+        Bu veriler <strong>sadece talebinize dönüş yapmak</strong> amacıyla
+        işlenir ve <strong>3 yıl süreyle</strong> saklanır. Kişisel verileriniz{" "}
+        <strong>üçüncü taraflarla paylaşılmaz</strong> ve yasal zorunluluklar
+        dışında silinir.
       </p>
 
       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
@@ -46,10 +59,48 @@ export default function GizlilikPolitikasiPage() {
       </p>
 
       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
+        Kişisel Verilerinizin Korunması Hakkındaki Haklarınız
+      </h2>
+      <p className="text-gray-800 dark:text-gray-200 mb-4">
+        KVKK kapsamında aşağıdaki haklara sahipsiniz:
+      </p>
+      <ul className="list-disc list-inside text-gray-800 dark:text-gray-200 mb-4 space-y-1">
+        <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+        <li>İşlenen kişisel verileriniz hakkında bilgi talep etme</li>
+        <li>
+          Kişisel verilerinizin işlenme amacını ve bunların amacına uygun
+          kullanılıp kullanılmadığını öğrenme
+        </li>
+        <li>
+          Yurt içinde veya yurt dışında kişisel verilerinizin aktarıldığı üçüncü
+          kişileri bilme
+        </li>
+        <li>
+          Kişisel verilerinizin eksik veya yanlış işlenmiş olması hâlinde
+          bunların düzeltilmesini isteme
+        </li>
+        <li>Kişisel verilerinizin silinmesini veya yok edilmesini isteme</li>
+        <li>
+          Düzeltme, silme ve yok edilme işlemlerinin, kişisel verilerin
+          aktarıldığı üçüncü kişilere bildirilmesini isteme
+        </li>
+      </ul>
+
+      <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
+        Veri Güvenliği
+      </h2>
+      <p className="text-gray-800 dark:text-gray-200 mb-6">
+        Kişisel verilerinizin güvenliğini sağlamak için uygun teknik ve idari
+        tedbirleri alıyoruz. Verileriniz şifrelenmiş olarak saklanır ve yetkisiz
+        erişime karşı korunur.
+      </p>
+
+      <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
         İletişim
       </h2>
       <p className="text-gray-800 dark:text-gray-200 mb-6">
-        Gizlilikle ilgili sorular için bizimle iletişime geçebilirsiniz:{" "}
+        Gizlilik politikası veya kişisel verilerinizle ilgili sorularınız için
+        bizimle iletişime geçebilirsiniz:{" "}
         <a
           href="mailto:neseligayrimenkul@gmail.com"
           className="text-emerald-600 hover:text-emerald-700 underline underline-offset-4"
