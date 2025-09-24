@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { toSlug } from "@/lib/slug";
 import type { Property } from "@/data/properties";
 import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
 
@@ -131,7 +132,7 @@ export default function ListingCard({ property }: ListingCardProps) {
 
         <div className="flex justify-between items-center">
           <Link
-            href={`/ilan/${property.id}`}
+            href={`/${property.id}-${toSlug(property.title)}`}
             className={`${
               isRental
                 ? "bg-green-600 hover:bg-green-700"

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { toSlug } from "@/lib/slug";
 import { useRouter } from "next/navigation";
 import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
@@ -403,7 +404,7 @@ export default function AdminDashboardPage() {
                               Düzenle
                             </Link>
                             <Link
-                              href={`/ilan/${p.id}`}
+                              href={`/${p.id}-${toSlug(p.title)}`}
                               className="text-gray-600 hover:text-gray-800 transition-colors button"
                             >
                               Görüntüle

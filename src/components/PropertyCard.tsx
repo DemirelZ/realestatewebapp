@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { toSlug } from "@/lib/slug";
 import type { Property } from "@/data/properties";
 import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
 
@@ -92,7 +93,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             {property.price}
           </div>
           <Link
-            href={`/ilan/${property.id}`}
+            href={`/${property.id}-${toSlug(property.title)}`}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Detaylar

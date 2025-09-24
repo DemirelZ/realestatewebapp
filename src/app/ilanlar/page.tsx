@@ -1,9 +1,31 @@
 import { getAllPropertiesFromDb } from "@/lib/firestore";
 import PropertyCard from "@/components/PropertyCard";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "İlanlar",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+  const title = "İlanlar | Neşeli Gayrimenkul";
+  const description = "Satılık ve kiralık güncel ilanlar. Neşeli Gayrimenkul";
+  const url = `${baseUrl}/ilanlar`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      siteName: "Neşeli Gayrimenkul",
+      locale: "tr_TR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function IlanlarPage() {
   const allProperties = await getAllPropertiesFromDb();

@@ -43,3 +43,11 @@ next-env.d.ts
 
 # hero video
 public/images/hero/hero-video.webm
+
+# videolar
+*.webm
+*.mov
+*.avi
+
+# kaynak/ham varlıklar
+public/images/hero/*-raw.*

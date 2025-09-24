@@ -16,8 +16,8 @@ export default function GizlilikPolitikasiPage() {
       </p>
 
       <p className="text-gray-800 dark:text-gray-200 mb-6">
-        <strong>Neşeli Gayrimenkul</strong> ("Site") yalnızca satılık ve kiralık
-        emlak ilanlarını sergilemek amacıyla hazırlanmıştır.
+        <strong>Neşeli Gayrimenkul</strong> (&quot;Site&quot;) yalnızca satılık
+        ve kiralık emlak ilanlarını sergilemek amacıyla hazırlanmıştır.
       </p>
 
       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">

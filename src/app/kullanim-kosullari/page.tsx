@@ -16,8 +16,8 @@ export default function KullanimKosullariPage() {
       </p>
 
       <p className="text-gray-800 dark:text-gray-200 mb-6">
-        Bu web sitesini ("Site") kullanarak aşağıdaki koşulları kabul etmiş
-        sayılırsınız:
+        Bu web sitesini (&quot;Site&quot;) kullanarak aşağıdaki koşulları kabul
+        etmiş sayılırsınız:
       </p>
 
       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-8 mb-2">
