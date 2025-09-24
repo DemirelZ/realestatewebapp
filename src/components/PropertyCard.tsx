@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Property } from "@/data/properties";
+import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
 
 type PropertyCardProps = {
   property: Property;
@@ -37,13 +38,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           {property.title}
         </h3>
         <p className="text-gray-600 mb-4 flex items-center">
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <MapPin className="w-4 h-4 mr-2" />
           {property.location}
         </p>
 
@@ -51,44 +46,20 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           {property.category === "Arsa" ? (
             <>
               <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                {property.landSpecs?.metrekare ?? "-"}
+                <Ruler className="w-4 h-4 mr-1" />
+                {property.landSpecs?.metrekare ?? "-"} m²
               </div>
               <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Metrekare Fiyatı: {property.landSpecs?.metrekareFiyati ?? "-"}
+                <Tag className="w-4 h-4 mr-1" />
+                Metrekare Fiyatı: {property.landSpecs?.metrekareFiyati ??
+                  "-"}{" "}
+                TL
               </div>
             </>
           ) : (
             <>
               <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Bed className="w-4 h-4 mr-1" />
                 {(() => {
                   const oda = property.housingSpecs?.odaSayisi;
                   const salon = property.housingSpecs?.salonSayisi;
@@ -99,31 +70,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 })()}
               </div>
               <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <Bath className="w-4 h-4 mr-1" />
                 Banyo:{property.housingSpecs?.banyoSayisi ?? "-"}
               </div>
               <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <Ruler className="w-4 h-4 mr-1" />
                 {property.housingSpecs?.netMetrekare ??
                 property.housingSpecs?.brutMetrekare
                   ? `${

@@ -56,7 +56,10 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4 relative">
+    <main
+      className="min-h-screen flex items-center justify-center px-4 relative bg-cover bg-center bg-no-repeat bg-gray-50 "
+      style={{ backgroundImage: "url('/images/login-bg.jpg')" }}
+    >
       {/* Ana Sayfa Butonu - Sağ Üst Köşe */}
       <div className="absolute top-4 right-4">
         <Link

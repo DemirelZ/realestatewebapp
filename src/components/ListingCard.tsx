@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Property } from "@/data/properties";
+import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
 
 type ListingCardProps = {
   property: Property;
@@ -51,50 +52,82 @@ export default function ListingCard({ property }: ListingCardProps) {
         </h3>
 
         <div className="flex items-center text-gray-600 mb-3">
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
+          <MapPin className="w-4 h-4 mr-2" />
           {property.location}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                isRental ? "text-green-600" : "text-blue-600"
-              }`}
-            >
-              {areaValue ? `${areaValue}m²` : "-"}
+        {property.category === "Arsa" ? (
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="text-center">
+              <div
+                className={`text-2xl font-bold ${
+                  isRental ? "text-green-600" : "text-blue-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Ruler className="w-4 h-4" />
+                  {property.landSpecs?.metrekare ?? "-"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">Metrekare</div>
             </div>
-            <div className="text-sm text-gray-600">Metrekare</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                isRental ? "text-teal-600" : "text-green-600"
-              }`}
-            >
-              {odaSalonText}
+            <div className="text-center">
+              <div
+                className={`text-2xl font-bold ${
+                  isRental ? "text-teal-600" : "text-green-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Tag className="w-4 h-4" />
+                  {property.landSpecs?.metrekareFiyati ?? "-"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">m² Fiyatı</div>
             </div>
-            <div className="text-sm text-gray-600">Oda</div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="text-center">
+              <div
+                className={`text-2xl font-bold ${
+                  isRental ? "text-green-600" : "text-blue-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Ruler className="w-4 h-4" />
+                  {areaValue ? `${areaValue}m²` : "-"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">Metrekare</div>
+            </div>
+            <div className="text-center">
+              <div
+                className={`text-2xl font-bold ${
+                  isRental ? "text-teal-600" : "text-green-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Bed className="w-4 h-4" />
+                  {odaSalonText}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">Oda</div>
+            </div>
+            <div className="text-center">
+              <div
+                className={`text-2xl font-bold ${
+                  isRental ? "text-emerald-600" : "text-indigo-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Bath className="w-4 h-4" />
+                  {property.housingSpecs?.banyoSayisi ?? "-"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">Banyo</div>
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-between items-center">
           <Link

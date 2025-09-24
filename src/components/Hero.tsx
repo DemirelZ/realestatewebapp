@@ -9,24 +9,37 @@ export default function Hero() {
 
   return (
     <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
+      {/* Background Video */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+      >
+        <source src="/images/hero/hero-video.mp4" type="video/mp4" />
+      </video>
       {/* Modern Glassmorphism Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-10">
+        {/* Dark overlay for better contrast */}
+        <div className="absolute inset-0 bg-black/30"></div>
         {/* Multiple Glassmorphism Layers */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-2xl"></div>
+        <div className="absolute inset-0 bg-white/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
         {/* Glassmorphism Shapes */}
         <div className="absolute inset-0">
           {/* Glassmorphism Circle */}
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
-          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20"></div>
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full border border-white/20"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full border border-white/20"></div>
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-white/10 rounded-full border border-white/20"></div>
         </div>
         {/* Additional Glassmorphism Effects */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent backdrop-blur-xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent backdrop-blur-xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-yellow-300">
             Emlakta Güvenin ve Uzmanlığın Adresi

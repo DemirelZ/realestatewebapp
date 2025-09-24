@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Neşeli Gayrimenkul - Güvenilir Emlak Çözümleri",
   description:
     "Neşeli Gayrimenkul ile hayalinizdeki evi bulun. Satılık, kiralık konutlar ve ticari gayrimenkul çözümleri.",
+  icons: {
+    icon: "/images/logos/NG.png",
+  },
 };
 
 export default function RootLayout({

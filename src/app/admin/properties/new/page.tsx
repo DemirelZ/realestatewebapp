@@ -122,8 +122,8 @@ export default function NewPropertyPage() {
     if (!files || files.length === 0) return;
 
     const fileArray = Array.from(files);
-    if (images.length + fileArray.length > 10) {
-      setError("Maksimum 10 resim yükleyebilirsiniz");
+    if (images.length + fileArray.length > 16) {
+      setError("Maksimum 16 resim yükleyebilirsiniz");
       return;
     }
 
@@ -1010,21 +1010,21 @@ export default function NewPropertyPage() {
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e.target.files)}
                 className="sr-only"
-                disabled={uploadingImages || images.length >= 10}
+                disabled={uploadingImages || images.length >= 16}
               />
               <label
                 htmlFor="property-images"
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                  uploadingImages || images.length >= 10
+                  uploadingImages || images.length >= 16
                     ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     : "bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
                 }`}
-                aria-disabled={uploadingImages || images.length >= 10}
+                aria-disabled={uploadingImages || images.length >= 16}
               >
                 📷 Resim Seç
               </label>
               <p className="text-sm text-gray-600 mt-1">
-                Maksimum 10 resim. {images.length}/10 kullanıldı.
+                Maksimum 16 resim. {images.length}/16 kullanıldı.
               </p>
             </div>
 
