@@ -18,7 +18,8 @@ export default function Hero() {
         playsInline
         aria-hidden="true"
       >
-        <source src="/images/hero/hero-video.mp4" type="video/mp4" />
+        <source src="/images/hero/hero-video.webm" type="video/webm" />
+        <source src="/images/hero/hero-video-compressed.mp4" type="video/mp4" />
       </video>
       {/* Modern Glassmorphism Background */}
       <div className="absolute inset-0 z-10">
