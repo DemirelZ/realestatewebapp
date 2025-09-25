@@ -97,12 +97,12 @@ export default function KiralikPage() {
             yardımcı oluyoruz. Hemen iletişime geçin!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
+            <Link
               href="/iletisim"
               className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               İletişime Geçin
-            </a>
+            </Link>
             <Link
               href="/"
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-lg font-semibold transition-colors"

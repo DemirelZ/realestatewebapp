@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Çerez Politikası | Neşeli Gayrimenkul",
   description: "Neşeli Gayrimenkul web sitesinin çerez politikası.",
@@ -34,19 +36,19 @@ export default function CerezPolitikasiPage() {
       </p>
 
       <footer className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400">
-        <a
+        <Link
           href="/gizlilik-politikasi"
           className="hover:text-gray-800 dark:hover:text-gray-200 underline underline-offset-4"
         >
           Gizlilik Politikası
-        </a>{" "}
+        </Link>{" "}
         ·{" "}
-        <a
+        <Link
           href="/kullanim-kosullari"
           className="hover:text-gray-800 dark:hover:text-gray-200 underline underline-offset-4"
         >
           Kullanım Koşulları
-        </a>{" "}
+        </Link>{" "}
         · © {currentYear} Neşeli Gayrimenkul
       </footer>
     </main>
