@@ -74,12 +74,4 @@ export default async function IlanDetay({
   return redirect(prettyPath);
 }
 
-function DetailRow({ label, value }: { label: string; value?: string }) {
-  if (!value) return null;
-  return (
-    <div className="flex items-center justify-between border-b border-gray-100 py-2 text-sm">
-      <span className="text-gray-500">{label}</span>
-      <span className="text-gray-800 font-medium">{value}</span>
-    </div>
-  );
-}
+// removed unused DetailRow component

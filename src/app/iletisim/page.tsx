@@ -322,8 +322,9 @@ export default function IletisimPage() {
                     </h3>
                     <div className="space-y-1">
                       <p className="text-gray-600">
-                        Pazartesi - Pazar: 09:00 - 19:00
+                        Pazartesi - Cumartesi: 09:00 - 20:00
                       </p>
+                      <p className="text-gray-600">Pazar: 12:00 - 17:00</p>
                     </div>
                   </div>
                 </div>
@@ -596,14 +597,13 @@ export default function IletisimPage() {
 
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <iframe
-              src="https://www.google.com/maps?q=39.96586054762177, 32.64664593685745&hl=tr&z=16&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3057.905893789363!2d32.64405947661207!3d39.96585667151561!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d337f461fbd39b%3A0xb59d4f4180e04199!2zTkXFnkVMxLAgR0FZUsSwTUVOS1VMIFZFIERBTknFnk1BTkxJSw!5e0!3m2!1str!2str!4v1758888966891!5m2!1str!2str"
               width="100%"
-              height="443"
+              height="450"
               style={{ border: 0 }}
               allowFullScreen
-              aria-hidden="false"
-              tabIndex={0}
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
         </div>

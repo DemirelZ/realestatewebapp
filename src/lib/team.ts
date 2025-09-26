@@ -78,7 +78,7 @@ export async function updateTeamMember(
   const sanitized = Object.fromEntries(
     Object.entries(data).filter(([, v]) => v !== undefined)
   ) as Partial<CreateTeamMember>;
-  await updateDoc(ref, sanitized as any);
+  await updateDoc(ref, sanitized);
 }
 
 export async function deleteTeamMember(id: string): Promise<void> {

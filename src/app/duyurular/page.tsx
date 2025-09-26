@@ -125,8 +125,7 @@ export default function DuyurularPage() {
                           <span className="mr-2">📅</span>
                           <time>
                             {new Date(
-                              (announcement.createdAt as any)?.toMillis?.() ??
-                                Date.now()
+                              announcement.createdAt?.toMillis?.() ?? Date.now()
                             ).toLocaleDateString("tr-TR", {
                               year: "numeric",
                               month: "long",

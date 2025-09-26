@@ -15,7 +15,7 @@ import {
 export default function EditAnnouncementPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
   const { auth } = getFirebaseClients();
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function EditAnnouncementPage({
         return;
       }
       try {
-        const { id } = await params;
+        const { id } = params;
         const list = await getAllAnnouncementsFromDbAdmin();
         const a = list.find((x) => x.id === id);
         if (!a) {
@@ -63,13 +63,13 @@ export default function EditAnnouncementPage({
     setError(null);
     setSuccess(null);
     try {
-      const { id } = await params;
+      const { id } = params;
       const payload: Partial<Announcement> = {
         title,
         content,
         visible,
       };
-      await updateAnnouncement(id, payload as any);
+      await updateAnnouncement(id, payload);
       setSuccess("Duyuru güncellendi");
       setTimeout(() => router.push("/admin/dashboard"), 1200);
     } catch (e: unknown) {
@@ -82,10 +82,10 @@ export default function EditAnnouncementPage({
   async function handleDelete() {
     if (!confirm("Bu duyuruyu silmek istediğinizden emin misiniz?")) return;
     try {
-      const { id } = await params;
+      const { id } = params;
       await deleteAnnouncement(id);
       router.push("/admin/dashboard");
-    } catch (e) {
+    } catch {
       setError("Silme hatası");
     }
   }

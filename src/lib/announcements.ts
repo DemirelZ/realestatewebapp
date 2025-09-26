@@ -7,6 +7,8 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
+  type Timestamp,
+  type FieldValue,
 } from "firebase/firestore";
 import { getFirebaseClients } from "./firebase";
 
@@ -15,11 +17,11 @@ export type Announcement = {
   title: string;
   content?: string;
   visible?: boolean; // default true
-  createdAt?: any; // Firestore Timestamp
+  createdAt?: Timestamp; // Firestore Timestamp
 };
 
 type CreateAnnouncement = Omit<Announcement, "id" | "createdAt"> & {
-  createdAt?: any;
+  createdAt?: Timestamp | FieldValue;
 };
 
 const COLLECTION = "announcements";
@@ -36,8 +38,8 @@ export async function getAllAnnouncementsFromDbAdmin(): Promise<
   }));
   // Newest first by createdAt if exists
   items.sort((a, b) => {
-    const ta = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const tb = (b.createdAt as any)?.toMillis?.() ?? 0;
+    const ta = a.createdAt?.toMillis?.() ?? 0;
+    const tb = b.createdAt?.toMillis?.() ?? 0;
     return tb - ta;
   });
   return items;
@@ -57,8 +59,8 @@ export async function getVisibleAnnouncementsFromDb(): Promise<Announcement[]> {
 
   // Newest first by createdAt if exists
   visibleItems.sort((a, b) => {
-    const ta = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const tb = (b.createdAt as any)?.toMillis?.() ?? 0;
+    const ta = a.createdAt?.toMillis?.() ?? 0;
+    const tb = b.createdAt?.toMillis?.() ?? 0;
     return tb - ta;
   });
 
@@ -94,7 +96,7 @@ export async function updateAnnouncement(
   const sanitized = Object.fromEntries(
     Object.entries(data).filter(([, v]) => v !== undefined)
   ) as Partial<CreateAnnouncement>;
-  await updateDoc(ref, sanitized as any);
+  await updateDoc(ref, sanitized);
 }
 
 export async function deleteAnnouncement(id: string): Promise<void> {

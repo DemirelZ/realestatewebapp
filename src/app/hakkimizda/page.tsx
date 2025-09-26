@@ -27,8 +27,8 @@ export default function HakkimizdaPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Hakkımızda</h1>
           <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-            Neşeli Gayrimenkul olarak 7 yılı aşkın süredir müşterilerimize
-            güvenilir ve profesyonel emlak hizmetleri sunuyoruz
+            Neşeli Gayrimenkul olarak samimi ve şeffaf iletişim anlayışımız
+            sayesinde güvenle tercih edilen bir marka olmanın gururunu yaşıyoruz
           </p>
         </div>
       </section>
@@ -44,13 +44,11 @@ export default function HakkimizdaPage() {
               <p className="text-lg text-gray-600 mb-6">
                 2018 yılında Ankara&apos;da kurulan Neşeli Gayrimenkul, emlak
                 sektöründe güvenilirlik ve kalite standartlarını yükseltmeyi
-                hedefleyen bir aile şirketi olarak yola çıktı.
+                hedefleyen bir şirket olarak yola çıktı.
               </p>
               <p className="text-lg text-gray-600 mb-6">
-                Kurucumuz İsmail Neşeli&apos;nin 7 yıllık emlak deneyimi ve
-                vizyonu ile, müşterilerimize sadece ev satmak değil, hayal
-                kurmak ve bu hayalleri gerçeğe dönüştürmek için hizmet
-                veriyoruz.
+                Her müşterimizin beklentilerini anlamak ve ona özel çözümler
+                sunmak, hizmet anlayışımızın temelini oluşturuyor.
               </p>
               <p className="text-lg text-gray-600">
                 Bugün deneyimli emlak danışmanlarımız ile Ankara&apos;nın

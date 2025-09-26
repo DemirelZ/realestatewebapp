@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getPropertyByIdFromDb } from "@/lib/firestore";
 
-type Params = { params: { id: string } };
+type Context = { params: Promise<{ id: string }> };
 
-export async function GET(_req: Request, { params }: Params) {
+export async function GET(_req: NextRequest, context: Context) {
   try {
-    const id = Number(params.id);
+    const { id: idStr } = await context.params;
+    const id = Number(idStr);
     if (!Number.isFinite(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }

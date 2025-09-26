@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getFirebaseClients } from "@/lib/firebase";
@@ -60,7 +61,7 @@ export default function EditPropertyPage({
   const [salonSayisi, setSalonSayisi] = useState<number | undefined>();
   const [isitma, setIsitma] = useState("");
   const [mutfak, setMutfak] = useState<"Açık" | "Kapalı" | "Diğer">("Açık");
-  const [banyoSayisi, setBanyoSayisi] = useState(1);
+  // removed unused duplicate bathroom count state
   const [otopark, setOtopark] = useState(false);
   const [balkon, setBalkon] = useState(false);
   const [asansor, setAsansor] = useState(false);
@@ -160,7 +161,7 @@ export default function EditPropertyPage({
           setKatSayisi(propertyData.housingSpecs.katSayisi);
           setIsitma(propertyData.housingSpecs.isitma || "");
           setMutfak(propertyData.housingSpecs.mutfak || "Açık");
-          setBanyoSayisi(propertyData.housingSpecs.banyoSayisi || 1);
+          // bathrooms state already controls banyo sayısı
           setOtopark(propertyData.housingSpecs.otopark || false);
           setBalkon(propertyData.housingSpecs.balkon || false);
           setAsansor(propertyData.housingSpecs.asansor || false);
@@ -213,7 +214,7 @@ export default function EditPropertyPage({
       try {
         const list = await getAllTeamMembersFromDbAdmin();
         setTeamMembers(list);
-      } catch (e) {
+      } catch {
         // ignore
       }
     })();
@@ -1151,9 +1152,11 @@ export default function EditPropertyPage({
                       key={index}
                       className="relative rounded-lg overflow-hidden bg-white shadow-sm"
                     >
-                      <img
+                      <Image
                         src={image}
                         alt={`Resim ${index + 1}`}
+                        width={400}
+                        height={96}
                         className="w-full h-24 object-contain"
                       />
                       <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">

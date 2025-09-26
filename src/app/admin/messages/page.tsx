@@ -1,5 +1,8 @@
 import { getAllContactMessages } from "@/lib/contactMessages";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Gelen Mesajlar",
 };

@@ -9,9 +9,8 @@ import Spinner from "@/components/Spinner";
 // allProperties kullanılacak, yerel örnek veriler kaldırıldı
 
 export default function KiralikPage() {
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedPriceRange, setSelectedPriceRange] = useState("");
-  const [selectedRoomType, setSelectedRoomType] = useState("");
+  const [selectedLocation] = useState("");
+  const [selectedRoomType] = useState("");
   const [items, setItems] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,11 +76,39 @@ export default function KiralikPage() {
           {loading ? (
             <Spinner label="İlanlar yükleniyor" />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredEmlaklar.map((emlak) => (
-                <ListingCard key={emlak.id} property={emlak} />
-              ))}
-            </div>
+            <>
+              {filteredEmlaklar.length === 0 ? (
+                <div className="py-24 text-center bg-white rounded-xl border border-gray-200">
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Şu anda kiralık ilan bulunmuyor
+                  </h2>
+                  <p className="mt-4 text-gray-600">
+                    Yeni ilanlar eklendiğinde burada görünecek. Bizimle
+                    iletişime geçebilir veya ana sayfaya dönebilirsiniz.
+                  </p>
+                  <div className="mt-8 flex items-center justify-center gap-4">
+                    <Link
+                      href="/iletisim"
+                      className="inline-flex items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-white hover:bg-green-700 transition-colors"
+                    >
+                      İletişime Geç
+                    </Link>
+                    <Link
+                      href="/"
+                      className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-5 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Ana Sayfa
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredEmlaklar.map((emlak) => (
+                    <ListingCard key={emlak.id} property={emlak} />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

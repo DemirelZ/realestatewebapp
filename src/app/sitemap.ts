@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getPropertyByIdFromDb } from "@/lib/firestore";
+// removed unused getPropertyByIdFromDb import
 import { readdir } from "fs/promises";
 import path from "path";
 

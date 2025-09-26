@@ -1,6 +1,7 @@
 import { getAllPropertiesFromDb } from "@/lib/firestore";
 import PropertyCard from "@/components/PropertyCard";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
@@ -41,11 +42,37 @@ export default async function IlanlarPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
+        {allProperties.length === 0 ? (
+          <div className="py-24 text-center bg-white rounded-xl border border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Şu anda görüntülenecek ilan bulunmuyor
+            </h2>
+            <p className="mt-4 text-gray-600">
+              Yeni ilanlar eklendiğinde burada görünecek. Bu arada bizimle
+              iletişime geçebilir veya ana sayfaya dönebilirsiniz.
+            </p>
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <Link
+                href="/iletisim"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-white hover:bg-blue-700 transition-colors"
+              >
+                İletişime Geç
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-5 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Ana Sayfa
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {allProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

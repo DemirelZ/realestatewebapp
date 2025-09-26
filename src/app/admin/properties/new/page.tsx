@@ -7,6 +7,7 @@ import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { createProperty } from "@/lib/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import Image from "next/image";
 // no direct Property usage here
 import { getAllTeamMembersFromDbAdmin, type TeamMember } from "@/lib/team";
 
@@ -92,7 +93,7 @@ export default function NewPropertyPage() {
   const [takas, setTakas] = useState<"Evet" | "Hayır" | "Değerlendirilebilir">(
     "Hayır"
   );
-  const [landUrl, setLandUrl] = useState("");
+  const [landUrl] = useState("");
 
   // Images
   const [images, setImages] = useState<string[]>([]);
@@ -112,7 +113,7 @@ export default function NewPropertyPage() {
       try {
         const list = await getAllTeamMembersFromDbAdmin();
         setTeamMembers(list);
-      } catch (e) {
+      } catch {
         // ignore
       }
     })();
@@ -203,7 +204,7 @@ export default function NewPropertyPage() {
             description: person.description,
             image: person.image,
             url: person.url,
-          }) as any;
+          }) as NonNullable<typeof propertyData.responsiblePerson>;
         }
       }
 
@@ -234,7 +235,7 @@ export default function NewPropertyPage() {
           takas: takasHousing,
           krediyeUygunluk: krediyeUygunlukHousing,
           url: housingUrl,
-        }) as any;
+        }) as NonNullable<typeof propertyData.housingSpecs>;
       }
 
       // Arsa özellikleri (undefined alanları gönderme)
@@ -253,7 +254,7 @@ export default function NewPropertyPage() {
           takas,
           description,
           url: landUrl,
-        }) as any;
+        }) as NonNullable<typeof propertyData.landSpecs>;
       }
 
       await createProperty(propertyData);
@@ -1037,9 +1038,11 @@ export default function NewPropertyPage() {
                       key={index}
                       className="relative rounded-lg overflow-hidden bg-white shadow-sm"
                     >
-                      <img
+                      <Image
                         src={image}
                         alt={`Resim ${index + 1}`}
+                        width={400}
+                        height={96}
                         className="w-full h-24 object-contain"
                       />
                       <div className="absolute inset-x-0 bottom-0 p-2 bg-black/50 flex items-center justify-between">

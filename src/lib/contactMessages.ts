@@ -5,6 +5,8 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  type Timestamp,
+  type DocumentData,
 } from "firebase/firestore";
 import { getFirebaseClients } from "./firebase";
 
@@ -38,17 +40,25 @@ export async function getAllContactMessages(): Promise<ContactMessage[]> {
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => {
-    const data = d.data() as any;
+    const data = d.data() as DocumentData & {
+      name?: unknown;
+      email?: unknown;
+      phone?: unknown;
+      subject?: unknown;
+      message?: unknown;
+      createdAt?: Timestamp | { toDate?: () => Date } | null;
+      read?: unknown;
+    };
     return {
       id: d.id,
-      name: data.name ?? "",
-      email: data.email ?? "",
-      phone: data.phone ?? "",
-      subject: data.subject ?? "",
-      message: data.message ?? "",
+      name: typeof data.name === "string" ? data.name : "",
+      email: typeof data.email === "string" ? data.email : "",
+      phone: typeof data.phone === "string" ? data.phone : "",
+      subject: typeof data.subject === "string" ? data.subject : "",
+      message: typeof data.message === "string" ? data.message : "",
       createdAt: data.createdAt?.toDate?.() ?? undefined,
       read: Boolean(data.read),
-    } as ContactMessage;
+    } satisfies ContactMessage;
   });
 }
 
@@ -58,7 +68,7 @@ export async function updateContactMessage(
 ): Promise<void> {
   const { db } = getFirebaseClients();
   const { doc, updateDoc } = await import("firebase/firestore");
-  await updateDoc(doc(db, "contactMessages", id), data as any);
+  await updateDoc(doc(db, "contactMessages", id), data);
 }
 
 export async function deleteContactMessage(id: string): Promise<void> {
