@@ -1,9 +1,7 @@
 import type { MetadataRoute } from "next";
-// removed unused getPropertyByIdFromDb import
 import { readdir } from "fs/promises";
 import path from "path";
 
-// Fallback static routes
 const staticRoutes = [
   "/",
   "/ilanlar",
@@ -18,31 +16,34 @@ const staticRoutes = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://neseligayrimenkul.vercel.app";
+  const now = new Date();
 
   const entries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     changeFrequency: "weekly",
     priority: route === "/" ? 1 : 0.7,
+    lastModified: now,
   }));
 
-  // Attempt to discover some property IDs by reading a simple cache folder if exists (optional)
+  // İlanları keşfetme (mevcut yaklaşımın kalsın, ama prod'da fs her zaman yok olabilir)
   try {
     const cacheDir = path.join(process.cwd(), ".next-cache", "properties");
     const files = await readdir(cacheDir);
     for (const f of files) {
       const id = Number(path.parse(f).name);
       if (Number.isFinite(id)) {
-        // Keep current /ilan/[id] structure for now; will switch to slug later in task
         entries.push({
           url: `${baseUrl}/ilan/${id}`,
           changeFrequency: "daily",
           priority: 0.8,
+          lastModified: now, // elinde varsa gerçek updatedAt değerini koy
         });
       }
     }
   } catch {
-    // ignore
+    // Vercel serverless'ta bu klasör olmayabilir; önemli değil
   }
 
   return entries;
