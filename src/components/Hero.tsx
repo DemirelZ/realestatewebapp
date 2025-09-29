@@ -1,27 +1,70 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 export default function Hero() {
   const googleReviewsUrl =
     "https://www.google.com/maps/search/?api=1&query=Ne%C5%9Feli+Gayrimenkul";
   const googleReviewCount = 35; // İsteğe göre güncellenebilir
 
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && el.dataset.srcLoaded !== "1") {
+          el.querySelectorAll("source[data-src]").forEach((s) => {
+            s.setAttribute("src", s.getAttribute("data-src")!);
+            s.removeAttribute("data-src");
+          });
+          el.load();
+          el.dataset.srcLoaded = "1";
+
+          // iOS/Safari autoplay güvence altına al
+          el.muted = true;
+          const tryPlay = async () => {
+            try {
+              await el.play();
+            } catch {
+              // Sessizce yut – kullanıcı etkileşimi gerekebilir
+            }
+          };
+          tryPlay();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
       {/* Background Video */}
       <video
+        ref={ref}
         className="absolute inset-0 w-full h-full object-cover z-0"
-        autoPlay
         muted
-        loop
         playsInline
+        autoPlay
+        loop
         preload="metadata"
-        poster="/images/hero/hero-video-poster.jpg"
+        poster="/images/hero/hero-poster.webp"
         aria-hidden="true"
       >
-        <source src="/images/hero/hero-video-480p.webm" type="video/webm" />
-        <source src="/images/hero/hero-video-480p.mp4" type="video/mp4" />
+        <source
+          data-src="/images/hero/hero-video-480p-nosound.webm"
+          type="video/webm"
+        />
+        <source
+          data-src="/images/hero/hero-video-480p-24fps.mp4"
+          type="video/mp4"
+        />
       </video>
 
       {/* Modern Glassmorphism Background */}
