@@ -45,6 +45,12 @@ export default function Hero() {
 
   return (
     <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
+      {/* Poster fallback (en altta görünür) */}
+      <div
+        className="absolute inset-0 -z-10 bg-center bg-cover"
+        style={{ backgroundImage: "url(/images/hero/hero-poster.webp)" }}
+        aria-hidden="true"
+      />
       {/* Background Video */}
       <video
         ref={ref}
