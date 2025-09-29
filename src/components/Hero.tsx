@@ -16,10 +16,15 @@ export default function Hero() {
         muted
         loop
         playsInline
+        preload="metadata"
+        poster="/images/hero/hero-video-poster.jpg"
         aria-hidden="true"
       >
-        <source src="/images/hero/hero-video.webm" type="video/webm" />
-        <source src="/images/hero/hero-video-compressed.mp4" type="video/mp4" />
+        <source
+          src="/images/hero/hero-video-optimized.webm"
+          type="video/webm"
+        />
+        <source src="/images/hero/hero-video-optimized.mp4" type="video/mp4" />
       </video>
       {/* Modern Glassmorphism Background */}
       <div className="absolute inset-0 z-10">
