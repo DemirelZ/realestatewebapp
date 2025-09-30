@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ImageCarouselProps = {
   images: string[];
@@ -15,6 +15,8 @@ export default function ImageCarousel({
   className,
 }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mainLoading, setMainLoading] = useState(true);
+  const [loadedThumbs, setLoadedThumbs] = useState<Set<number>>(new Set());
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
 
@@ -24,6 +26,11 @@ export default function ImageCarousel({
     : [];
   const displayImages =
     safeImages.length > 0 ? safeImages : ["/images/no-images.png"];
+
+  useEffect(() => {
+    // whenever the main image index changes, show loader until the new image loads
+    setMainLoading(true);
+  }, [currentIndex, displayImages[currentIndex]]);
 
   const goPrev = () => {
     setCurrentIndex(
@@ -87,10 +94,19 @@ export default function ImageCarousel({
           src={displayImages[currentIndex]}
           alt={alt}
           fill
-          className="object-contain select-none"
+          className={`object-contain select-none transition-opacity duration-200 ${
+            mainLoading ? "opacity-0" : "opacity-100"
+          }`}
           priority
           draggable={false}
+          onLoadingComplete={() => setMainLoading(false)}
         />
+
+        {mainLoading && (
+          <div className="absolute inset-0 grid place-items-center bg-white/40">
+            <div className="h-8 w-8 border-2 border-gray-700/40 border-t-gray-700 rounded-full animate-spin" />
+          </div>
+        )}
 
         {displayImages.length > 1 && (
           <>
@@ -162,13 +178,24 @@ export default function ImageCarousel({
                   : "border-transparent hover:border-gray-300"
               }`}
             >
-              <Image
-                src={thumbSrc}
-                alt={`${alt} küçük önizleme ${idx + 1}`}
-                width={80}
-                height={80}
-                className="object-cover rounded-md"
-              />
+              <div className="relative h-20 w-20">
+                <Image
+                  src={thumbSrc}
+                  alt={`${alt} küçük önizleme ${idx + 1}`}
+                  fill
+                  className={`object-cover rounded-md transition-opacity duration-200 ${
+                    loadedThumbs.has(idx) ? "opacity-100" : "opacity-0"
+                  }`}
+                  onLoadingComplete={() =>
+                    setLoadedThumbs((prev) => new Set(prev).add(idx))
+                  }
+                />
+                {!loadedThumbs.has(idx) && (
+                  <div className="absolute inset-0 grid place-items-center bg-white/40 rounded-md">
+                    <div className="h-5 w-5 border-2 border-gray-700/40 border-t-gray-700 rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
             </button>
           ))}
         </div>

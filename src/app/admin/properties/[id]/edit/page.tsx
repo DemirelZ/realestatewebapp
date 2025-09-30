@@ -239,7 +239,10 @@ export default function EditPropertyPage({
           storage,
           `properties/${Date.now()}_${file.name}`
         );
-        await uploadBytes(storageRef, file);
+        await uploadBytes(storageRef, file, {
+          contentType: file.type,
+          cacheControl: "public, max-age=31536000, immutable",
+        });
         const url = await getDownloadURL(storageRef);
         uploadedUrls.push(url);
         setPendingUploadCount((prev) => Math.max(0, prev - 1));
@@ -1143,8 +1146,8 @@ export default function EditPropertyPage({
               </p>
             </div>
 
-            {/* Mevcut Resimler */}
-            {images.length > 0 && (
+            {/* Mevcut/Pending Resimler */}
+            {(images.length > 0 || pendingUploadCount > 0) && (
               <div className="mb-4 mt-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image, index) => (

@@ -1,4 +1,5 @@
 import { getAllPropertiesFromDb } from "@/lib/firestore";
+import { unstable_noStore as noStore } from "next/cache";
 import PropertyCard from "@/components/PropertyCard";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -29,6 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function IlanlarPage() {
+  noStore();
   const allProperties = await getAllPropertiesFromDb();
   return (
     <main className="py-16 bg-gray-50 min-h-screen">

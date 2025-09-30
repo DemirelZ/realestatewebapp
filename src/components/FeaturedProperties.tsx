@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { getAllPropertiesFromDb } from "@/lib/firestore";
 import PropertyCard from "@/components/PropertyCard";
 
 export default async function FeaturedProperties() {
+  noStore();
   const allProperties = await getAllPropertiesFromDb();
   return (
     <section className="py-16 bg-gray-50">

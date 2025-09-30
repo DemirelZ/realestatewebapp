@@ -138,7 +138,10 @@ export default function NewPropertyPage() {
           storage,
           `properties/${Date.now()}_${file.name}`
         );
-        await uploadBytes(storageRef, file);
+        await uploadBytes(storageRef, file, {
+          contentType: file.type,
+          cacheControl: "public, max-age=31536000, immutable",
+        });
         const url = await getDownloadURL(storageRef);
         uploadedUrls.push(url);
         setPendingUploadCount((prev) => Math.max(0, prev - 1));
@@ -1029,8 +1032,8 @@ export default function NewPropertyPage() {
               </p>
             </div>
 
-            {/* Eklenen Resimler */}
-            {images.length > 0 && (
+            {/* Eklenen/Pending Resimler */}
+            {(images.length > 0 || pendingUploadCount > 0) && (
               <div className="mb-4 mt-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image, index) => (
