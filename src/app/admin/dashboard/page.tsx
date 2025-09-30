@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { getFirebaseClients } from "@/lib/firebase";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { getAllPropertiesFromDb, deleteProperty } from "@/lib/firestore";
+import type { ResponsiblePerson } from "@/data/properties";
 import {
   getAllTeamMembersFromDbAdmin,
   deleteTeamMember,
@@ -37,6 +38,7 @@ export default function AdminDashboardPage() {
     type: string;
     price: string;
     category?: "Konut" | "Arsa";
+    responsiblePerson?: ResponsiblePerson;
   };
   const [items, setItems] = useState<DashboardProperty[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
