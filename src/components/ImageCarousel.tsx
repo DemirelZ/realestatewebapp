@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import NextImage from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 type ImageCarouselProps = {
@@ -29,7 +29,8 @@ export default function ImageCarousel({
 
   useEffect(() => {
     // preload the first image to avoid infinite spinner on first render
-    const img = new Image();
+    if (typeof window === "undefined") return;
+    const img = new window.Image();
     img.src = displayImages[0];
     const handleLoad = () => {
       if (currentIndex === 0) setMainLoading(false);
@@ -106,7 +107,7 @@ export default function ImageCarousel({
         onTouchEnd={onTouchEnd}
         className="relative w-full h-80 md:h-[28rem] rounded-lg overflow-hidden shadow"
       >
-        <Image
+        <NextImage
           src={displayImages[currentIndex]}
           alt={alt}
           fill
@@ -196,7 +197,7 @@ export default function ImageCarousel({
               }`}
             >
               <div className="relative h-20 w-20">
-                <Image
+                <NextImage
                   src={thumbSrc}
                   alt={`${alt} küçük önizleme ${idx + 1}`}
                   fill
