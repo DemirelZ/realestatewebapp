@@ -1,14 +1,17 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { toSlug } from "@/lib/slug";
 import type { Property } from "@/data/properties";
 import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
+import { useState } from "react";
 
 type ListingCardProps = {
   property: Property;
 };
 
 export default function ListingCard({ property }: ListingCardProps) {
+  const [imgLoading, setImgLoading] = useState(true);
   const imageSrc =
     property.images &&
     property.images.length > 0 &&
@@ -38,12 +41,20 @@ export default function ListingCard({ property }: ListingCardProps) {
           src={imageSrc}
           alt={property.title}
           fill
-          className="object-cover"
+          className={`object-cover transition-opacity duration-200 ${
+            imgLoading ? "opacity-0" : "opacity-100"
+          }`}
+          onLoadingComplete={() => setImgLoading(false)}
         />
+        {imgLoading && (
+          <div className="absolute inset-0 grid place-items-center bg-gray-100">
+            <div className="h-8 w-8 border-2 border-gray-700/40 border-t-gray-700 rounded-full animate-spin" />
+          </div>
+        )}
         <div
           className={`absolute top-4 right-4 ${badgeColor} ${badgeTextColor} px-3 py-1 rounded-full text-sm font-semibold`}
         >
-          {property.price}
+          {property.price} <span className="opacity-90">TL</span>
         </div>
       </div>
 

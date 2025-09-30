@@ -59,8 +59,9 @@ export default async function PrettyIlanPage({
               {property.location}
             </p>
 
-            <div className="text-3xl font-bold text-blue-600 mb-6">
-              {property.price}
+            <div className="text-3xl font-bold text-blue-600 mb-4">
+              {property.price}{" "}
+              <span className="text-blue-600/90 text-2xl">TL</span>
             </div>
 
             {property.responsiblePerson && (
@@ -85,7 +86,7 @@ export default async function PrettyIlanPage({
             )}
 
             {property.category === "Arsa" ? (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <DetailRow label="Alan" value={property.landSpecs?.metrekare} />
                 <DetailRow
                   label="Metrekare Fiyatı"
@@ -120,7 +121,7 @@ export default async function PrettyIlanPage({
                 <DetailRow label="Takas" value={property.landSpecs?.takas} />
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <DetailRow
                   label="Konut Tipi"
                   value={property.housingSpecs?.konutType}
@@ -226,11 +227,11 @@ export default async function PrettyIlanPage({
 
             {(property.housingSpecs?.description ||
               property.landSpecs?.description) && (
-              <div className="mb-6 mt-4">
+              <div className="mb-5 mt-3">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Açıklama
                 </h2>
-                <p className="text-gray-700 whitespace-pre-line">
+                <p className="text-gray-700 whitespace-pre-line leading-relaxed">
                   {property.housingSpecs?.description ??
                     property.landSpecs?.description}
                 </p>

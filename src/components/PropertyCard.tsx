@@ -1,14 +1,17 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { toSlug } from "@/lib/slug";
 import type { Property } from "@/data/properties";
 import { MapPin, Bed, Bath, Ruler, Tag } from "lucide-react";
+import { useState } from "react";
 
 type PropertyCardProps = {
   property: Property;
 };
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const [imgLoading, setImgLoading] = useState(true);
   const imageSrc =
     property.images &&
     property.images.length > 0 &&
@@ -22,8 +25,16 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           src={imageSrc}
           alt={property.title}
           fill
-          className="object-cover"
+          className={`object-cover transition-opacity duration-200 ${
+            imgLoading ? "opacity-0" : "opacity-100"
+          }`}
+          onLoadingComplete={() => setImgLoading(false)}
         />
+        {imgLoading && (
+          <div className="absolute inset-0 grid place-items-center bg-gray-100">
+            <div className="h-8 w-8 border-2 border-gray-700/40 border-t-gray-700 rounded-full animate-spin" />
+          </div>
+        )}
         {property.featured && (
           <div className="absolute top-4 left-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
             Öne Çıkan
@@ -90,7 +101,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-blue-600">
-            {property.price}
+            {property.price}{" "}
+            <span className="text-blue-600/90 text-xl">TL</span>
           </div>
           <Link
             href={`/${property.id}-${toSlug(property.title)}`}

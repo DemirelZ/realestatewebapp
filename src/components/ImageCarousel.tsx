@@ -28,9 +28,25 @@ export default function ImageCarousel({
     safeImages.length > 0 ? safeImages : ["/images/no-images.png"];
 
   useEffect(() => {
-    // whenever the main image index changes, show loader until the new image loads
+    // preload the first image to avoid infinite spinner on first render
+    const img = new Image();
+    img.src = displayImages[0];
+    const handleLoad = () => {
+      if (currentIndex === 0) setMainLoading(false);
+    };
+    const handleError = () => setMainLoading(false);
+    img.addEventListener("load", handleLoad);
+    img.addEventListener("error", handleError);
+    return () => {
+      img.removeEventListener("load", handleLoad);
+      img.removeEventListener("error", handleError);
+    };
+  }, [displayImages]);
+
+  useEffect(() => {
+    // whenever index changes, show loader until the new image loads
     setMainLoading(true);
-  }, [currentIndex, displayImages[currentIndex]]);
+  }, [currentIndex]);
 
   const goPrev = () => {
     setCurrentIndex(
@@ -100,6 +116,7 @@ export default function ImageCarousel({
           priority
           draggable={false}
           onLoadingComplete={() => setMainLoading(false)}
+          onError={() => setMainLoading(false)}
         />
 
         {mainLoading && (
