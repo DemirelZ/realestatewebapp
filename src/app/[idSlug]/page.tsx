@@ -63,6 +63,27 @@ export default async function PrettyIlanPage({
               {property.price}
             </div>
 
+            {property.responsiblePerson && (
+              <div className="mb-6 p-4 rounded-lg border border-gray-200 bg-gray-50">
+                <h2 className="text-base font-semibold text-gray-900 mb-2">
+                  Danışman
+                </h2>
+                <div className="text-gray-800 font-medium">
+                  {property.responsiblePerson.name}
+                </div>
+                {property.responsiblePerson.phone && (
+                  <div className="mt-1">
+                    <a
+                      href={`tel:${property.responsiblePerson.phone}`}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      {property.responsiblePerson.phone}
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+
             {property.category === "Arsa" ? (
               <div className="space-y-2">
                 <DetailRow label="Alan" value={property.landSpecs?.metrekare} />

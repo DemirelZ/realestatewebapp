@@ -214,6 +214,21 @@ export default function EditPropertyPage({
       try {
         const list = await getAllTeamMembersFromDbAdmin();
         setTeamMembers(list);
+        // Preselect responsible if property already has one
+        if (property && property.responsiblePerson) {
+          const rp = property.responsiblePerson;
+          const match = list.find(
+            (m) =>
+              m.name?.trim().toLowerCase() === rp.name?.trim().toLowerCase() ||
+              (rp.email &&
+                m.email &&
+                m.email.toLowerCase() === rp.email.toLowerCase()) ||
+              (rp.phone &&
+                m.phone &&
+                m.phone.replace(/\D/g, "") === rp.phone.replace(/\D/g, ""))
+          );
+          if (match) setSelectedResponsibleId(match.id);
+        }
       } catch {
         // ignore
       }
@@ -571,6 +586,23 @@ export default function EditPropertyPage({
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     min="0"
                     required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Salon Sayısı
+                  </label>
+                  <input
+                    type="number"
+                    value={salonSayisi || ""}
+                    onChange={(e) =>
+                      setSalonSayisi(
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="0"
                   />
                 </div>
 
