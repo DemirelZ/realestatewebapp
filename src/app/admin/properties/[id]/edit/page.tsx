@@ -149,7 +149,7 @@ export default function EditPropertyPage({
 
         // Responsible person
         if (propertyData.responsiblePerson) {
-          // doesn't have id, we match by name later in UI as fallback
+          // Selection will be handled after team members are loaded
         }
 
         // Housing specs
@@ -344,7 +344,7 @@ export default function EditPropertyPage({
         url: landUrl,
       });
 
-      const updateData: Partial<Property> = {
+      const updateData: Partial<Property> = pruneUndefined({
         title,
         location,
         price,
@@ -355,7 +355,7 @@ export default function EditPropertyPage({
         images,
         housingSpecs: housing,
         ...(category === "Arsa" ? { landSpecs: land } : {}),
-      };
+      });
 
       if (selectedResponsibleId) {
         const person = teamMembers.find((m) => m.id === selectedResponsibleId);
@@ -522,20 +522,6 @@ export default function EditPropertyPage({
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="6.500.000 TL"
                 required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Depozito (TL)
-              </label>
-              <input
-                type="text"
-                value={deposit}
-                onChange={(e) => setDeposit(formatTrThousands(e.target.value))}
-                inputMode="numeric"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="10.000 TL"
               />
             </div>
 
@@ -794,6 +780,24 @@ export default function EditPropertyPage({
                     placeholder="1.200 TL"
                   />
                 </div>
+
+                {type === "Kiralık" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-1">
+                      Depozito (TL)
+                    </label>
+                    <input
+                      type="text"
+                      value={deposit}
+                      onChange={(e) =>
+                        setDeposit(formatTrThousands(e.target.value))
+                      }
+                      inputMode="numeric"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="10.000 TL"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">

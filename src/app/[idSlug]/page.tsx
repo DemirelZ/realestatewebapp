@@ -64,12 +64,6 @@ export default async function PrettyIlanPage({
               <span className="text-blue-600/90 text-2xl">TL</span>
             </div>
 
-            {property.type === "Kiralık" && property.deposit && (
-              <div className="text-lg font-medium text-gray-800 mb-4">
-                Depozito: {property.deposit} TL
-              </div>
-            )}
-
             {property.responsiblePerson && (
               <div className="mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
                 <h2 className="text-base font-semibold text-gray-900 mb-2">
@@ -219,6 +213,12 @@ export default async function PrettyIlanPage({
                   <DetailRow
                     label="Aidat"
                     value={property.housingSpecs.aidat}
+                  />
+                )}
+                {property.type === "Kiralık" && property.deposit && (
+                  <DetailRow
+                    label="Depozito"
+                    value={`${property.deposit} TL`}
                   />
                 )}
                 <DetailRow
