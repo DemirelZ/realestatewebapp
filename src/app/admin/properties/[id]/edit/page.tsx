@@ -235,7 +235,7 @@ export default function EditPropertyPage({
         // ignore
       }
     })();
-  }, []);
+  }, [property]);
 
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -862,7 +862,7 @@ export default function EditPropertyPage({
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">
                     İlan URL (Sahibinden veya hepsemlak gibi sitelerden alınan
-                    ilanın URL'si)
+                    ilanın URL&apos;si)
                   </label>
                   <input
                     type="url"

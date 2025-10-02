@@ -42,7 +42,7 @@ export default function ImageCarousel({
       img.removeEventListener("load", handleLoad);
       img.removeEventListener("error", handleError);
     };
-  }, [displayImages]);
+  }, [displayImages, currentIndex]);
 
   useEffect(() => {
     // whenever index changes, show loader until the new image loads
