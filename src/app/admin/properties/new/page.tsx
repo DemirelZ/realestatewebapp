@@ -187,18 +187,16 @@ export default function NewPropertyPage() {
     try {
       const allImages = [...images];
 
-      const propertyData: Parameters<typeof createProperty>[0] = pruneUndefined(
-        {
-          title,
-          location,
-          price,
-          deposit: deposit || undefined,
-          type,
-          category,
-          images: allImages,
-          featured,
-        }
-      );
+      const propertyData = pruneUndefined({
+        title,
+        location,
+        price,
+        deposit: deposit || undefined,
+        type,
+        category,
+        images: allImages,
+        featured,
+      }) as Parameters<typeof createProperty>[0];
 
       if (selectedResponsibleId) {
         const person = teamMembers.find((m) => m.id === selectedResponsibleId);
