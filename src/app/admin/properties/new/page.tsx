@@ -38,10 +38,11 @@ export default function NewPropertyPage() {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [price, setPrice] = useState("");
+  const [deposit, setDeposit] = useState("");
   const [type, setType] = useState<"Satılık" | "Kiralık">("Satılık");
   const [category, setCategory] = useState<"Konut" | "Arsa">("Konut");
   const [bedrooms, setBedrooms] = useState(1);
-  const [bathrooms, setBathrooms] = useState(1);
+  const [bathrooms, setBathrooms] = useState<number | undefined>(undefined);
   const [featured, setFeatured] = useState(true);
   const [description, setDescription] = useState("");
 
@@ -49,7 +50,7 @@ export default function NewPropertyPage() {
   const [konutType, setKonutType] = useState("");
   const [brutMetrekare, setBrutMetrekare] = useState<number | undefined>();
   const [netMetrekare, setNetMetrekare] = useState<number | undefined>();
-  const [binaYasi, setBinaYasi] = useState<number | undefined>();
+  const [binaYasi, setBinaYasi] = useState<number | string | undefined>();
   const [bulunduguKat, setBulunduguKat] = useState<number | undefined>();
   const [katSayisi, setKatSayisi] = useState<number | undefined>();
   const [salonSayisi, setSalonSayisi] = useState<number | undefined>();
@@ -190,6 +191,7 @@ export default function NewPropertyPage() {
         title,
         location,
         price,
+        deposit: deposit || undefined,
         type,
         category,
         images: allImages,
@@ -379,6 +381,20 @@ export default function NewPropertyPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">
+                Depozito (TL)
+              </label>
+              <input
+                type="text"
+                value={deposit}
+                onChange={(e) => setDeposit(formatTrThousands(e.target.value))}
+                inputMode="numeric"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="10.000 TL"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">
                 Tür
               </label>
               <select
@@ -479,11 +495,14 @@ export default function NewPropertyPage() {
                   </label>
                   <input
                     type="number"
-                    value={bathrooms}
-                    onChange={(e) => setBathrooms(Number(e.target.value))}
+                    value={bathrooms ?? ""}
+                    onChange={(e) =>
+                      setBathrooms(
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    min="1"
-                    required
+                    min="0"
                   />
                 </div>
 
@@ -526,15 +545,16 @@ export default function NewPropertyPage() {
                     Bina Yaşı
                   </label>
                   <input
-                    type="number"
-                    value={binaYasi || ""}
-                    onChange={(e) =>
-                      setBinaYasi(
-                        e.target.value ? Number(e.target.value) : undefined
-                      )
-                    }
+                    type="text"
+                    value={binaYasi ?? ""}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === "") return setBinaYasi(undefined);
+                      const n = Number(v);
+                      setBinaYasi(Number.isFinite(n) ? n : v);
+                    }}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="5"
+                    placeholder="5 veya 11-15"
                   />
                 </div>
 
@@ -654,48 +674,52 @@ export default function NewPropertyPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Krediye Uygunluk
-                  </label>
-                  <select
-                    value={krediyeUygunlukHousing}
-                    onChange={(e) =>
-                      setKrediyeUygunlukHousing(
-                        e.target.value as "Evet" | "Hayır" | "Bilinmiyor"
-                      )
-                    }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="Bilinmiyor">Bilinmiyor</option>
-                    <option value="Evet">Evet</option>
-                    <option value="Hayır">Hayır</option>
-                  </select>
-                </div>
+                {type !== "Kiralık" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                        Krediye Uygunluk
+                      </label>
+                      <select
+                        value={krediyeUygunlukHousing}
+                        onChange={(e) =>
+                          setKrediyeUygunlukHousing(
+                            e.target.value as "Evet" | "Hayır" | "Bilinmiyor"
+                          )
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="Bilinmiyor">Bilinmiyor</option>
+                        <option value="Evet">Evet</option>
+                        <option value="Hayır">Hayır</option>
+                      </select>
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Takas
-                  </label>
-                  <select
-                    value={takasHousing}
-                    onChange={(e) =>
-                      setTakasHousing(
-                        e.target.value as
-                          | "Evet"
-                          | "Hayır"
-                          | "Değerlendirilebilir"
-                      )
-                    }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="Hayır">Hayır</option>
-                    <option value="Evet">Evet</option>
-                    <option value="Değerlendirilebilir">
-                      Değerlendirilebilir
-                    </option>
-                  </select>
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                        Takas
+                      </label>
+                      <select
+                        value={takasHousing}
+                        onChange={(e) =>
+                          setTakasHousing(
+                            e.target.value as
+                              | "Evet"
+                              | "Hayır"
+                              | "Değerlendirilebilir"
+                          )
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="Hayır">Hayır</option>
+                        <option value="Evet">Evet</option>
+                        <option value="Değerlendirilebilir">
+                          Değerlendirilebilir
+                        </option>
+                      </select>
+                    </div>
+                  </>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-1">

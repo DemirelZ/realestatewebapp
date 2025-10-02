@@ -125,19 +125,21 @@ export default function ListingCard({ property }: ListingCardProps) {
               </div>
               <div className="text-sm text-gray-600">Oda</div>
             </div>
-            <div className="text-center">
-              <div
-                className={`text-2xl font-bold ${
-                  isRental ? "text-emerald-600" : "text-indigo-600"
-                }`}
-              >
-                <span className="inline-flex items-center gap-1">
-                  <Bath className="w-4 h-4" />
-                  {property.housingSpecs?.banyoSayisi ?? "-"}
-                </span>
+            {typeof property.housingSpecs?.banyoSayisi === "number" && (
+              <div className="text-center">
+                <div
+                  className={`text-2xl font-bold ${
+                    isRental ? "text-emerald-600" : "text-indigo-600"
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <Bath className="w-4 h-4" />
+                    {property.housingSpecs?.banyoSayisi}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600">Banyo</div>
               </div>
-              <div className="text-sm text-gray-600">Banyo</div>
-            </div>
+            )}
           </div>
         )}
 

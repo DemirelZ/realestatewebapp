@@ -64,8 +64,14 @@ export default async function PrettyIlanPage({
               <span className="text-blue-600/90 text-2xl">TL</span>
             </div>
 
+            {property.type === "Kiralık" && property.deposit && (
+              <div className="text-lg font-medium text-gray-800 mb-4">
+                Depozito: {property.deposit} TL
+              </div>
+            )}
+
             {property.responsiblePerson && (
-              <div className="mb-6 p-4 rounded-lg border border-gray-200 bg-gray-50">
+              <div className="mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
                 <h2 className="text-base font-semibold text-gray-900 mb-2">
                   Danışman
                 </h2>
@@ -73,7 +79,7 @@ export default async function PrettyIlanPage({
                   {property.responsiblePerson.name}
                 </div>
                 {property.responsiblePerson.phone && (
-                  <div className="mt-1">
+                  <div className="mt-0.5">
                     <a
                       href={`tel:${property.responsiblePerson.phone}`}
                       className="text-blue-600 hover:text-blue-700"
@@ -132,7 +138,9 @@ export default async function PrettyIlanPage({
                 />
                 <div className="grid grid-cols-3 gap-2 text-sm text-gray-700">
                   <div>Oda: {property.housingSpecs?.odaSayisi ?? "-"}</div>
-                  <div>Banyo: {property.housingSpecs?.banyoSayisi ?? "-"}</div>
+                  {typeof property.housingSpecs?.banyoSayisi === "number" && (
+                    <div>Banyo: {property.housingSpecs?.banyoSayisi}</div>
+                  )}
                   <div>
                     Alan:{" "}
                     {property.housingSpecs?.netMetrekare ??
@@ -217,11 +225,18 @@ export default async function PrettyIlanPage({
                   label="Tapu Durumu"
                   value={property.housingSpecs?.tapuDurumu}
                 />
-                <DetailRow
-                  label="Krediye Uygunluk"
-                  value={property.housingSpecs?.krediyeUygunluk}
-                />
-                <DetailRow label="Takas" value={property.housingSpecs?.takas} />
+                {property.type !== "Kiralık" && (
+                  <>
+                    <DetailRow
+                      label="Krediye Uygunluk"
+                      value={property.housingSpecs?.krediyeUygunluk}
+                    />
+                    <DetailRow
+                      label="Takas"
+                      value={property.housingSpecs?.takas}
+                    />
+                  </>
+                )}
               </div>
             )}
 
@@ -285,7 +300,7 @@ export default async function PrettyIlanPage({
 function DetailRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 py-2 text-sm">
+    <div className="flex items-center justify-between border-b border-gray-100 py-1.5 text-sm">
       <span className="text-gray-500">{label}</span>
       <span className="text-gray-800 font-medium">{value}</span>
     </div>

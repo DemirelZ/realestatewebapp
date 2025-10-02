@@ -21,7 +21,7 @@ export type HousingSpecs = {
   odaSayisi?: number;
   salonSayisi?: number;
   banyoSayisi?: number;
-  binaYasi?: number;
+  binaYasi?: number | string;
   bulunduguKat?: number;
   katSayisi?: number;
   isitma?: string; // Örn: Doğalgaz, Klima, Yerden Isıtma
@@ -56,6 +56,7 @@ export type Property = {
   title: string;
   location: string;
   price: string;
+  deposit?: string;
   type: "Satılık" | "Kiralık";
   category?: "Konut" | "Arsa"; // Opsiyonel kategori
   responsiblePerson?: ResponsiblePerson;

@@ -81,10 +81,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                   return "-";
                 })()}
               </div>
-              <div className="flex items-center">
-                <Bath className="w-4 h-4 mr-1" />
-                Banyo:{property.housingSpecs?.banyoSayisi ?? "-"}
-              </div>
+              {typeof property.housingSpecs?.banyoSayisi === "number" && (
+                <div className="flex items-center">
+                  <Bath className="w-4 h-4 mr-1" />
+                  Banyo:{property.housingSpecs?.banyoSayisi}
+                </div>
+              )}
               <div className="flex items-center">
                 <Ruler className="w-4 h-4 mr-1" />
                 {property.housingSpecs?.netMetrekare ??
