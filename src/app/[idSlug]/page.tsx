@@ -32,38 +32,42 @@ export default async function PrettyIlanPage({
   return (
     <main className="py-12 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <ImageCarousel images={images} alt={property.title} />
+        <div className="bg-white rounded-lg p-6 shadow mb-2">
+          <div className="flex items-start justify-between">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              {property.title}
+            </h1>
+            <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">
+              {property.type}
+            </span>
+          </div>
+          <p className="text-gray-600 mb-4 flex items-center">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {property.location}
+          </p>
+          <div className="text-3xl font-bold text-blue-600">
+            {property.price}{" "}
+            <span className="text-blue-600/90 text-2xl">TL</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <ImageCarousel
+            images={images}
+            alt={property.title}
+            className="lg:col-span-2"
+          />
 
           <div className="bg-white rounded-lg p-6 shadow">
-            <div className="flex items-start justify-between mb-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                {property.title}
-              </h1>
-              <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">
-                {property.type}
-              </span>
-            </div>
-            <p className="text-gray-600 mb-4 flex items-center">
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {property.location}
-            </p>
-
-            <div className="text-3xl font-bold text-blue-600 mb-4">
-              {property.price}{" "}
-              <span className="text-blue-600/90 text-2xl">TL</span>
-            </div>
-
             {property.responsiblePerson && (
               <div className="mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
                 <h2 className="text-base font-semibold text-gray-900 mb-2">
@@ -240,19 +244,6 @@ export default async function PrettyIlanPage({
               </div>
             )}
 
-            {(property.housingSpecs?.description ||
-              property.landSpecs?.description) && (
-              <div className="mb-5 mt-3">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Açıklama
-                </h2>
-                <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                  {property.housingSpecs?.description ??
-                    property.landSpecs?.description}
-                </p>
-              </div>
-            )}
-
             <div className="mt-8">
               <div className="flex flex-wrap gap-3">
                 <Link
@@ -292,6 +283,19 @@ export default async function PrettyIlanPage({
             </div>
           </div>
         </div>
+
+        {(property.housingSpecs?.description ||
+          property.landSpecs?.description) && (
+          <div className="bg-white rounded-lg p-6 shadow mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              Açıklama
+            </h2>
+            <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              {property.housingSpecs?.description ??
+                property.landSpecs?.description}
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

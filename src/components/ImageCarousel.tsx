@@ -1,7 +1,7 @@
 "use client";
 
 import NextImage from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type ImageCarouselProps = {
   images: string[];
@@ -21,11 +21,13 @@ export default function ImageCarousel({
   const touchEndXRef = useRef<number | null>(null);
 
   const hasImages = Array.isArray(images) && images.length > 0;
-  const safeImages = hasImages
-    ? images.filter((src) => src && src.trim() !== "")
-    : [];
-  const displayImages =
-    safeImages.length > 0 ? safeImages : ["/images/no-images.png"];
+  const safeImages = useMemo(() => {
+    if (!hasImages) return [] as string[];
+    return images.filter((src) => src && src.trim() !== "");
+  }, [hasImages, images]);
+  const displayImages = useMemo(() => {
+    return safeImages.length > 0 ? safeImages : ["/images/no-images.png"];
+  }, [safeImages]);
 
   useEffect(() => {
     // preload the first image to avoid infinite spinner on first render
@@ -105,18 +107,20 @@ export default function ImageCarousel({
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="relative w-full h-80 md:h-[28rem] rounded-lg overflow-hidden shadow"
+        className="relative w-full h-96 md:h-[32rem] lg:h-[36rem] rounded-lg overflow-hidden shadow"
       >
         <NextImage
           src={displayImages[currentIndex]}
           alt={alt}
           fill
+          sizes="(min-width: 1024px) 66vw, 100vw"
           className={`object-contain select-none transition-opacity duration-200 ${
             mainLoading ? "opacity-0" : "opacity-100"
           }`}
-          priority
+          priority={currentIndex === 0}
+          fetchPriority="high"
           draggable={false}
-          onLoadingComplete={() => setMainLoading(false)}
+          onLoad={() => setMainLoading(false)}
           onError={() => setMainLoading(false)}
         />
 
@@ -201,10 +205,11 @@ export default function ImageCarousel({
                   src={thumbSrc}
                   alt={`${alt} küçük önizleme ${idx + 1}`}
                   fill
+                  sizes="80px"
                   className={`object-cover rounded-md transition-opacity duration-200 ${
                     loadedThumbs.has(idx) ? "opacity-100" : "opacity-0"
                   }`}
-                  onLoadingComplete={() =>
+                  onLoad={() =>
                     setLoadedThumbs((prev) => new Set(prev).add(idx))
                   }
                 />

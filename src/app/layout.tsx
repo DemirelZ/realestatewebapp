@@ -28,9 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <head>
-        <link rel="preload" as="image" href="/images/hero/hero-poster.webp" />
-      </head>
+      <head></head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

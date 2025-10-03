@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 export default function Hero() {
   const googleReviewsUrl =
     "https://www.google.com/maps/search/?api=1&query=Ne%C5%9Feli+Gayrimenkul";
-  const googleReviewCount = 35; // İsteğe göre güncellenebilir
+  const googleReviewCount = 40; // İsteğe göre güncellenebilir
 
   const ref = useRef<HTMLVideoElement>(null);
 

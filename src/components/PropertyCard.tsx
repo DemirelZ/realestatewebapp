@@ -28,7 +28,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           className={`object-cover transition-opacity duration-200 ${
             imgLoading ? "opacity-0" : "opacity-100"
           }`}
-          onLoadingComplete={() => setImgLoading(false)}
+          onLoad={() => setImgLoading(false)}
         />
         {imgLoading && (
           <div className="absolute inset-0 grid place-items-center bg-gray-100">
