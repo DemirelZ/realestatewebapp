@@ -51,3 +51,14 @@ public/images/hero/hero-video.webm
 
 # kaynak/ham varlıklar
 public/images/hero/*-raw.*
+
+# markdown
+*.md
+*.txt
+*.docx
+*.doc
+*.pdf
+*.xls
+*.xlsx
+*.ppt
+*.pptx

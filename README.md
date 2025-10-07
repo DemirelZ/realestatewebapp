@@ -1,82 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 Neşeli Gayrimenkul - Modern Emlak Platformu
 
-## Getting Started
+Neşeli Gayrimenkul için geliştirilmiş, modern ve kullanıcı dostu bir emlak web uygulaması. Bu platform, gayrimenkul alım-satım ve kiralama süreçlerini dijitalleştirerek müşterilere hızlı, güvenilir ve profesyonel hizmet sunmayı amaçlamaktadır.
 
-### Firebase setup
+## 🚀 Özellikler
 
-1. Install deps (already added):
+### 🎯 Temel Özellikler
+
+- **Kapsamlı İlan Sistemi**: Satılık ve kiralık emlak ilanlarının detaylı gösterimi
+- **Gelişmiş Filtreleme**: İlan tipine göre (satılık/kiralık) hızlı arama ve filtreleme
+- **Responsive Tasarım**: Mobil, tablet ve masaüstü cihazlarda mükemmel görünüm
+- **SEO Optimizasyonu**: Arama motorlarında yüksek sıralama için optimize edilmiş yapı
+- **Hızlı Performans**: Next.js 15 ve Turbopack ile optimize edilmiş yükleme süreleri
+
+### 🎨 Kullanıcı Arayüzü
+
+- **Modern Hero Bölümü**: Video arka plan ve glassmorphism efektleri ile çarpıcı ana sayfa
+- **İnteraktif Galeri**: Emlak görselleri için akıcı carousel sistemi
+- **Harita Entegrasyonu**: Leaflet ile interaktif konum gösterimi
+- **Dinamik İlan Kartları**: Görsel açıdan zengin ve bilgilendirici ilan kartları
+- **Google Yorumları**: 5/5 yıldız müşteri memnuniyeti gösterimi
+
+### 👥 Kullanıcı Özellikleri
+
+- **İletişim Formu**: Hızlı iletişim için e-posta entegrasyonu (Nodemailer)
+- **Rate Limiting**: Spam koruması için Upstash Redis ile istek sınırlama
+- **Çoklu Sayfa Yapısı**: Hakkımızda, İletişim, Duyurular ve daha fazlası
+- **Yasal Sayfalar**: Gizlilik Politikası, Çerez Politikası, Kullanım Koşulları
+
+### 🛠️ Admin Paneli
+
+- **Kolay İlan Yönetimi**: Emlak ilanlarını ekleme, düzenleme ve silme
+- **Duyuru Sistemi**: Özel duyuruları yayınlama ve yönetme
+- **Mesaj Yönetimi**: Gelen müşteri mesajlarını takip etme
+- **Ekip Yönetimi**: Takım üyelerini ekleme ve güncelleme
+- **Güvenli Giriş**: Firebase Authentication ile korumalı admin erişimi
+- **Modern Dashboard**: Kullanımı kolay yönetim arayüzü
+
+### 🔒 Güvenlik
+
+- **Firebase Authentication**: Güvenli kullanıcı doğrulama
+- **Firestore Database**: Güvenilir ve ölçeklenebilir veritabanı
+- **Rate Limiting**: DDoS ve spam koruması
+- **Güvenli API Routes**: Next.js API routes ile korumalı backend
+
+### 🌐 SEO & Performans
+
+- **Sitemap**: Otomatik sitemap oluşturma
+- **Robots.txt**: Arama motoru botları için optimize edilmiş yönlendirme
+- **Meta Tags**: Her sayfa için optimize edilmiş meta etiketler
+- **Lazy Loading**: Görseller ve video için akıllı yükleme
+- **Optimized Images**: WebP formatı ve responsive görseller
+
+## 🛠️ Teknoloji Stack
+
+### Frontend
+
+- **Next.js 15**: React tabanlı modern web framework
+- **React 19**: En güncel React sürümü
+- **TypeScript**: Tip güvenli kod yazımı
+- **Tailwind CSS 4**: Utility-first CSS framework
+- **Lucide React**: Modern icon kütüphanesi
+
+### Backend & Database
+
+- **Firebase**: Authentication ve Firestore veritabanı
+- **Upstash Redis**: Rate limiting ve caching
+- **Nodemailer**: E-posta gönderimi
+
+### Harita & Lokasyon
+
+- **Leaflet**: Açık kaynak harita kütüphanesi
+- **React Leaflet**: React için Leaflet entegrasyonu
+
+### Geliştirme Araçları
+
+- **ESLint**: Kod kalitesi ve standartları
+- **PostCSS**: CSS işleme
+- **Turbopack**: Hızlı geliştirme ve build süreci
+
+## 📱 Proje Yapısı
 
 ```
-npm install firebase
+realestate/
+├── src/
+│   ├── app/                    # Next.js 15 App Router
+│   │   ├── admin/             # Admin paneli sayfaları
+│   │   ├── api/               # API routes
+│   │   ├── ilan/              # İlan detay sayfaları
+│   │   ├── ilanlar/           # Tüm ilanlar listesi
+│   │   ├── satilik/           # Satılık ilanlar
+│   │   ├── kiralik/           # Kiralık ilanlar
+│   │   └── ...                # Diğer sayfalar
+│   ├── components/            # Reusable React bileşenleri
+│   │   ├── Header.tsx
+│   │   ├── Hero.tsx
+│   │   ├── Footer.tsx
+│   │   └── ...
+│   ├── lib/                   # Utility fonksiyonlar
+│   │   ├── firebase.ts
+│   │   ├── firestore.ts
+│   │   └── ...
+│   └── data/                  # Statik veri dosyaları
+├── public/                    # Statik dosyalar
+│   └── images/               # Görseller
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+└── next.config.ts
 ```
 
-2. Create a Firebase project and enable Firestore (Native/Production mode or Test mode as you prefer).
+## 🎯 Kullanım
 
-3. Add a Web App in Firebase console and copy the config. Add the following env variables in a `.env.local` file at the project root:
+### Müşteriler için
 
-```
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
+1. Ana sayfadan "Tüm İlanlar", "Satılık" veya "Kiralık" butonlarına tıklayın
+2. İlanlara göz atın ve detayları inceleyin
+3. Beğendiğiniz bir ilan için "İletişim" sayfasından ulaşın
+4. Harita üzerinden konumları görüntüleyin
 
-4. Create a `properties` collection in Firestore. Use numeric document IDs (e.g. `1`, `2`, `3`) to match the app’s routing. Example document data:
+### Adminler için
 
-```
-{
-  "title": "Modern 3+1 Daire",
-  "location": "Kadıköy, İstanbul",
-  "price": "2.500.000 TL",
-  "type": "Satılık",
-  "category": "Konut",
-  "bedrooms": 3,
-  "bathrooms": 2,
-  "image": "/images/properties/modern-apartment.jpg",
-  "featured": true,
-  "housingSpecs": {
-    "brutMetrekare": 130,
-    "netMetrekare": 110
-  }
-}
-```
+1. `/admin/login` sayfasından giriş yapın
+2. Dashboard'dan istatistikleri görüntüleyin
+3. İlan ekleyin, düzenleyin veya silin
+4. Gelen mesajları kontrol edin
+5. Duyuruları yönetin
 
-5. Test APIs locally:
+## 🤝 Katkıda Bulunma
 
-- List: `GET /api/properties`
-- Get by id: `GET /api/properties/1`
+1. Bu repoyu fork edin
+2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Add some AmazingFeature'`)
+4. Branch'inizi push edin (`git push origin feature/AmazingFeature`)
+5. Pull Request açın
 
-First, run the development server:
+## 📄 Lisans
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Bu proje özel kullanım içindir. Ticari kullanım için lütfen iletişime geçin.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🙏 Teşekkürler
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Bu proje aşağıdaki harika açık kaynak projeleri kullanmaktadır:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org/)
+- [React](https://react.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Firebase](https://firebase.google.com/)
+- [Leaflet](https://leafletjs.com/)
+- [Lucide Icons](https://lucide.dev/)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Short screens gif here
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+![](/allcat2.gif)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![](/allcat3.gif)
