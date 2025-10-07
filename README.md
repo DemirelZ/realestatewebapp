@@ -155,6 +155,6 @@ Bu proje aşağıdaki harika açık kaynak projeleri kullanmaktadır:
 
 ### Short screens gif here
 
-![](/allcat2.gif)
+![](/allcatt2.gif)
 
-![](/allcat3.gif)
+![](/allcatt3.gif)
